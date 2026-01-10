@@ -8,6 +8,34 @@
 [![codecov](https://codecov.io/gh/cognitedata/cognite-sdk-dotnet/branch/master/graph/badge.svg?token=da8aPB6l9U)](https://codecov.io/gh/cognitedata/cognite-sdk-dotnet)
 [![Nuget](https://img.shields.io/nuget/vpre/CogniteSdk)](https://www.nuget.org/packages/CogniteSdk/)
 
+---
+
+## 🚀 Data Modeling Extensions (This Fork)
+
+This fork contains proposed Data Modeling extensions on the `feature/data-modeling-extensions` branch. These extensions add:
+
+| Feature | Description |
+|---------|-------------|
+| **FilterBuilder** | Fluent API for type-safe Data Model filters |
+| **GraphQL Client** | Execute GraphQL queries against Data Model endpoints |
+| **Sync API** | Real-time synchronization with `IAsyncEnumerable` streaming |
+| **QueryBuilder** | Fluent API for complex graph queries |
+| **Search API** | Full-text and property-scoped search |
+| **Aggregate API** | Count, sum, avg, histogram, and groupBy |
+
+**Quick Start:**
+```bash
+git checkout feature/data-modeling-extensions
+dotnet build CogniteSdk.Extensions/ CogniteSdk.Types.Extensions/
+dotnet test Test/CogniteSdk.Extensions.Tests/  # 127 tests
+```
+
+📖 See [CONTRIBUTING_EXTENSIONS.md](CONTRIBUTING_EXTENSIONS.md) for full documentation.
+
+> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). All code has been reviewed, tested (127 unit tests), and verified against CDF API documentation.
+
+---
+
 CogniteSdk for .NET is a cross platform asynchronous SDK for accessing the [Cognite Data Fusion](https://docs.cognite.com/) [API (v1)](https://docs.cognite.com/api/v1/) using [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) that works for all .NET implementations i.e both [.NET Core](https://en.wikipedia.org/wiki/.NET_Core) and [.NET Framework](https://en.wikipedia.org/wiki/.NET_Framework).
 
 **Unofficial**: please note that this is an unofficial and community driven SDK. Feel free to open issues, or provide PRs if you want to improve the library.
