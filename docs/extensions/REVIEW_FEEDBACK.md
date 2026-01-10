@@ -10,15 +10,15 @@
 
 ## Executive Summary
 
-| Aspect | Status | Notes |
-|--------|--------|-------|
-| **Overall Quality** | ✅ Excellent | Well-structured, follows SDK patterns |
-| **Documentation** | ✅ Excellent | Comprehensive XML docs, AI disclosure |
-| **Test Coverage** | ✅ Excellent | 39 unit + 12 integration tests |
-| **Input Validation** | ✅ Excellent | Consistent validation throughout |
-| **Async Patterns** | ✅ Excellent | ConfigureAwait(false) used correctly |
-| **API Design** | ✅ Good | Clean fluent APIs |
-| **Architecture** | ✅ Acceptable | GraphQL standalone by design (documented) |
+| Aspect               | Status       | Notes                                     |
+| -------------------- | ------------ | ----------------------------------------- |
+| **Overall Quality**  | ✅ Excellent  | Well-structured, follows SDK patterns     |
+| **Documentation**    | ✅ Excellent  | Comprehensive XML docs, AI disclosure     |
+| **Test Coverage**    | ✅ Excellent  | 39 unit + 12 integration tests            |
+| **Input Validation** | ✅ Excellent  | Consistent validation throughout          |
+| **Async Patterns**   | ✅ Excellent  | ConfigureAwait(false) used correctly      |
+| **API Design**       | ✅ Good       | Clean fluent APIs                         |
+| **Architecture**     | ✅ Acceptable | GraphQL standalone by design (documented) |
 
 ---
 
@@ -39,10 +39,10 @@
 
 **Minor Issues:**
 
-| Line | Issue | Severity | Recommendation |
-|------|-------|----------|----------------|
-| 133 | `RawPropertyValue<double>(value)` for `long` - implicit widening cast | Low | Consider explicit cast or separate `RawPropertyValue<long>` for clarity |
-| 436-441 | `ToString()` catches all exceptions silently | Low | Consider logging or more specific catch |
+| Line    | Issue                                                                 | Severity | Recommendation                                                          |
+| ------- | --------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------- |
+| 133     | `RawPropertyValue<double>(value)` for `long` - implicit widening cast | Low      | Consider explicit cast or separate `RawPropertyValue<long>` for clarity |
+| 436-441 | `ToString()` catches all exceptions silently                          | Low      | Consider logging or more specific catch                                 |
 
 **Code Quality:**
 
@@ -90,21 +90,21 @@ private static void ValidatePropertyPath(IEnumerable<string> property)
 
 **Test Coverage Matrix:**
 
-| Filter Type | Happy Path | Error Cases | Chaining |
-|-------------|------------|-------------|----------|
-| HasData | ✅ | ✅ | - |
-| Equals | ✅ (string, double, bool) | ✅ | ✅ |
-| In | ✅ | - | - |
-| Range | ✅ | ✅ | - |
-| Prefix | ✅ | - | - |
-| Exists | ✅ | - | - |
-| ContainsAny | ✅ | - | - |
-| ContainsAll | ✅ | - | - |
-| And | ✅ | - | ✅ |
-| Or | ✅ | - | - |
-| Not | ✅ | - | - |
-| MatchAll | ✅ | - | - |
-| Parameter | ✅ | ✅ | - |
+| Filter Type | Happy Path               | Error Cases | Chaining |
+| ----------- | ------------------------ | ----------- | -------- |
+| HasData     | ✅                        | ✅           | -        |
+| Equals      | ✅ (string, double, bool) | ✅           | ✅        |
+| In          | ✅                        | -           | -        |
+| Range       | ✅                        | ✅           | -        |
+| Prefix      | ✅                        | -           | -        |
+| Exists      | ✅                        | -           | -        |
+| ContainsAny | ✅                        | -           | -        |
+| ContainsAll | ✅                        | -           | -        |
+| And         | ✅                        | -           | ✅        |
+| Or          | ✅                        | -           | -        |
+| Not         | ✅                        | -           | -        |
+| MatchAll    | ✅                        | -           | -        |
+| Parameter   | ✅                        | ✅           | -        |
 
 **Missing Tests** (non-blocking):
 - Nested filter combinations (And within Or within Not)
@@ -208,18 +208,18 @@ finally
 
 **Architectural Notes** (documented, not blocking):
 
-| Aspect | SDK Pattern | This Implementation | Justification |
-|--------|-------------|---------------------|---------------|
-| Base Class | Inherits `Resource` | Standalone | Avoids Oryx/F# layer changes |
-| Access | `client.DataModels.GraphQL` | Manual instantiation | GraphQL URL differs from REST |
-| HTTP | Oryx pipeline | Direct HttpClient | Different request/response format |
+| Aspect     | SDK Pattern                 | This Implementation  | Justification                     |
+| ---------- | --------------------------- | -------------------- | --------------------------------- |
+| Base Class | Inherits `Resource`         | Standalone           | Avoids Oryx/F# layer changes      |
+| Access     | `client.DataModels.GraphQL` | Manual instantiation | GraphQL URL differs from REST     |
+| HTTP       | Oryx pipeline               | Direct HttpClient    | Different request/response format |
 
 **Minor Issues:**
 
-| Line | Issue | Severity | Recommendation |
-|------|-------|----------|----------------|
-| 124 | `ReadAsStringAsync()` without CancellationToken | Low | .NET Standard 2.0 limitation - acceptable |
-| 64, 94 | `HasErrors` uses `Enumerable.Any()` | Low | Null-safe but could use `?.Any() ?? false` |
+| Line   | Issue                                           | Severity | Recommendation                             |
+| ------ | ----------------------------------------------- | -------- | ------------------------------------------ |
+| 124    | `ReadAsStringAsync()` without CancellationToken | Low      | .NET Standard 2.0 limitation - acceptable  |
+| 64, 94 | `HasErrors` uses `Enumerable.Any()`             | Low      | Null-safe but could use `?.Any() ?? false` |
 
 **Verdict**: ✅ Approved - Well-implemented standalone resource.
 
@@ -269,9 +269,9 @@ finally
 
 **Minor Issue:**
 
-| Line | Issue | Severity | Recommendation |
-|------|-------|----------|----------------|
-| 202, 249, 301 | `new HttpClient()` inside test methods | Low | Could cause socket exhaustion under heavy test runs; acceptable for limited integration tests |
+| Line          | Issue                                  | Severity | Recommendation                                                                                |
+| ------------- | -------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| 202, 249, 301 | `new HttpClient()` inside test methods | Low      | Could cause socket exhaustion under heavy test runs; acceptable for limited integration tests |
 
 **Note**: The SyncMode tests are intentionally excluded because the API feature is not yet available. This is documented in the test file comments (lines 20-24).
 
@@ -281,14 +281,14 @@ finally
 
 ## Summary Table
 
-| PR | Title | Lines | Status | Notes |
-|----|-------|-------|--------|-------|
-| 1 | FilterBuilder | 471 | ✅ Approved | Excellent fluent API |
-| 2 | FilterBuilder Unit Tests | 291 | ✅ Approved | 26 tests |
-| 3 | SyncQuery Extensions | ~257 | ✅ Approved | Validation added (13 tests) |
-| 4 | GraphQL Resource | 346 | ✅ Approved | Standalone by design |
-| 5 | FilterBuilder Integration | 519 | ✅ Approved | 7 integration tests |
-| 6 | Sync+GraphQL Integration | 328 | ✅ Approved | 5 integration tests |
+| PR  | Title                     | Lines | Status     | Notes                       |
+| --- | ------------------------- | ----- | ---------- | --------------------------- |
+| 1   | FilterBuilder             | 471   | ✅ Approved | Excellent fluent API        |
+| 2   | FilterBuilder Unit Tests  | 291   | ✅ Approved | 26 tests                    |
+| 3   | SyncQuery Extensions      | ~257  | ✅ Approved | Validation added (13 tests) |
+| 4   | GraphQL Resource          | 346   | ✅ Approved | Standalone by design        |
+| 5   | FilterBuilder Integration | 519   | ✅ Approved | 7 integration tests         |
+| 6   | Sync+GraphQL Integration  | 328   | ✅ Approved | 5 integration tests         |
 
 ---
 
@@ -311,11 +311,11 @@ finally
 
 ### Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Breaking existing code | Low | High | Extensions only - no modifications to existing types |
-| SyncMode API changes | Medium | Low | Types are forward-compatible, can update |
-| GraphQL endpoint changes | Low | Medium | Separate resource, easy to update |
+| Risk                     | Likelihood | Impact | Mitigation                                           |
+| ------------------------ | ---------- | ------ | ---------------------------------------------------- |
+| Breaking existing code   | Low        | High   | Extensions only - no modifications to existing types |
+| SyncMode API changes     | Medium     | Low    | Types are forward-compatible, can update             |
+| GraphQL endpoint changes | Low        | Medium | Separate resource, easy to update                    |
 
 ---
 

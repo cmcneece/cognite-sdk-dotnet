@@ -121,7 +121,7 @@ The extensions are designed to be submitted as **6 independent, human-reviewable
 |----|-------|-------|-------|-------|
 | 1 | FilterBuilder Fluent API | 1 | 471 | - |
 | 2 | FilterBuilder Unit Tests | 1 | 291 | 26 unit |
-| 3 | SyncQuery Extensions | 2 | ~200 | 13 unit |
+| 3 | SyncQuery Extensions | 2 | ~257 | 13 unit |
 | 4 | GraphQL Resource | 2 | 346 | - |
 | 5 | FilterBuilder Integration Tests | 1 | 519 | 7 integration |
 | 6 | Sync + GraphQL Integration Tests | 1 | 328 | 5 integration |
@@ -168,8 +168,8 @@ The extensions are designed to be submitted as **6 independent, human-reviewable
 **Purpose**: Extend `SyncQuery` with sync modes and backfill sorting.
 
 **Files**:
-- `CogniteSdk.Types/DataModels/Query/Query.cs` (~50 lines added)
-- `CogniteSdk/test/csharp/SyncQueryTests.cs` (134 lines)
+- `CogniteSdk.Types/DataModels/Query/Query.cs` (~75 lines added)
+- `CogniteSdk/test/csharp/SyncQueryTests.cs` (182 lines)
 
 **Dependencies**: None. Extends existing `SyncQuery` class.
 
@@ -308,10 +308,10 @@ This code was developed with AI assistance (Claude via Cursor). Human review and
 | File | Lines | Description |
 |------|-------|-------------|
 | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | 471 | Fluent filter builder |
-| `CogniteSdk.Types/DataModels/Query/Query.cs` | +50 | Extended with SyncMode, SyncBackfillSort |
+| `CogniteSdk.Types/DataModels/Query/Query.cs` | +75 | Extended with SyncMode, SyncBackfillSort |
 | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | 144 | GraphQL request/response types |
 | `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | 202 | GraphQL query execution |
 | `CogniteSdk/test/csharp/FilterBuilderTests.cs` | 291 | FilterBuilder unit tests (26 tests) |
-| `CogniteSdk/test/csharp/SyncQueryTests.cs` | ~180 | SyncQuery extension unit tests (13 tests) |
+| `CogniteSdk/test/csharp/SyncQueryTests.cs` | 182 | SyncQuery extension unit tests (13 tests) |
 | `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` | 519 | FilterBuilder integration tests (7 tests) |
 | `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` | 328 | SyncQuery + GraphQL integration tests (5 tests) |
