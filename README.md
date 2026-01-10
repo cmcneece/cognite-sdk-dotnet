@@ -14,25 +14,22 @@
 
 This fork contains proposed Data Modeling extensions on the `feature/data-modeling-extensions` branch. These extensions add:
 
-| Feature | Description |
-|---------|-------------|
-| **FilterBuilder** | Fluent API for type-safe Data Model filters |
-| **GraphQL Client** | Execute GraphQL queries against Data Model endpoints |
-| **Sync API** | Real-time synchronization with `IAsyncEnumerable` streaming |
-| **QueryBuilder** | Fluent API for complex graph queries |
-| **Search API** | Full-text and property-scoped search |
-| **Aggregate API** | Count, sum, avg, histogram, and groupBy |
+| Feature | Location | Description |
+|---------|----------|-------------|
+| **FilterBuilder** | `CogniteSdk.Types/DataModels/Query/` | Fluent API for type-safe DMS filters |
+| **SyncMode & BackfillSort** | `CogniteSdk.Types/DataModels/Query/` | Sync API mode and backfill sorting |
+| **GraphQL Client** | `CogniteSdk/src/Resources/DataModels/` | Execute GraphQL queries against Data Models |
 
 **Quick Start:**
 ```bash
 git checkout feature/data-modeling-extensions
-dotnet build CogniteSdk.Extensions/ CogniteSdk.Types.Extensions/
-dotnet test Test/CogniteSdk.Extensions.Tests/  # 127 tests
+dotnet build
+dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~Test.CSharp.Unit"  # 34 unit tests
 ```
 
 📖 See [CONTRIBUTING_EXTENSIONS.md](CONTRIBUTING_EXTENSIONS.md) for full documentation.
 
-> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). 127 unit tests were written. No independent human code review was performed beyond reliance on tests.
+> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). 34 unit tests were written. No independent human code review was performed beyond reliance on tests.
 
 ---
 

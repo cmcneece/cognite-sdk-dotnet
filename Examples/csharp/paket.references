@@ -1,9 +1,0 @@
-group Examples
-    FSharp.Core
-    Microsoft.AspNetCore.Hosting
-    Microsoft.Extensions.DependencyInjection
-    Microsoft.Extensions.Configuration
-    Microsoft.Extensions.Hosting
-    Microsoft.Extensions.Logging
-    Microsoft.Extensions.Logging.EventLog
-    Microsoft.Identity.Client

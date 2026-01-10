@@ -1,172 +1,117 @@
-# Contributing to Cognite .NET SDK Extensions
+# Contributing: Data Modeling Extensions
 
-**Status**: 🟡 Internal Review  
-**Author**: Colin McNeece (@cmcneece)
+This document describes the Data Modeling extensions contributed to this fork of the Cognite .NET SDK.
 
----
+## Scope of Changes
 
-## Overview
+After analysis of the existing SDK, this contribution focuses on **net new functionality** not present in the official SDK:
 
-This repository contains proposed Data Modeling extensions for the official [Cognite .NET SDK](https://github.com/cognitedata/cognite-sdk-dotnet).
+### 1. FilterBuilder (Fluent API)
 
-### What's Included
+**Location**: `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs`
 
-| Feature | Description | Lines | Tests |
-|---------|-------------|-------|-------|
-| FilterBuilder | Fluent API for DMS filters | ~420 | 32 |
-| GraphQL | Query Data Models via GraphQL | ~285 | 16 |
-| Sync (Basic) | Real-time sync with IAsyncEnumerable | ~380 | 12 |
-| Sync (Advanced) | Sync modes, backfillSort | ~170 | 6 |
-| QueryBuilder (Basic) | Fluent graph queries | ~350 | 22 |
-| QueryBuilder (Advanced) | Parameters, recursive traversal | ~200 | 13 |
-| Search | Full-text and property search | ~380 | 16 |
-| Aggregate | Count, sum, avg, histogram, groupBy | ~460 | 10 |
-| **Total** | | **~2,625** | **127** |
+A fluent builder for constructing DMS filters. The official SDK has filter types (`EqualsFilter`, `AndFilter`, etc.) but no fluent API for building them.
 
----
-
-## Contribution Phases
-
-### Phase 1: Internal Review (Current)
-
-**Goal**: Get feedback from colleagues before any external submission.
-
-- Share this repo with team members
-- Gather feedback on approach and code
-- Address concerns before proceeding
-
-### Phase 2: Community Discussion
-
-**Goal**: Gauge maintainer interest before submitting code.
-
-Open a GitHub Discussion on the official repo:
-- Describe the proposed additions
-- Link to this repository
-- Ask for feedback on approach
-
-**Only proceed to Phase 3 if maintainers are receptive.**
-
-### Phase 3: PR Submission
-
-**Goal**: Submit code in small, reviewable chunks.
-
-See [docs/extensions/PULL_REQUESTS.md](docs/extensions/PULL_REQUESTS.md) for the 9 PR breakdown.
-
-See [docs/extensions/DEVELOPMENT_PROCESS.md](docs/extensions/DEVELOPMENT_PROCESS.md) for details on the development methodology, quality assurance, and known limitations.
-
----
-
-## AI Assistance Disclosure
-
-This code was developed with AI assistance (Claude/Cursor). All PRs will include:
-
-> ⚠️ **AI Assistance Disclosure**
-> 
-> This code was developed with the assistance of AI tools (Claude/Cursor).
-> - 127 unit tests were written
-> - Code was checked against CDF API documentation
-> - No independent human code review was performed beyond reliance on tests
-
----
-
-## How to Provide Feedback
-
-If you have access to this repository:
-
-1. **Open an Issue** - For bugs, concerns, or suggestions
-2. **Comment on Code** - Use GitHub's code review features
-3. **Direct Message** - Contact Colin McNeece directly
-
----
-
-## Repository Structure
-
-```
-├── CogniteSdk.Extensions/               # Resource implementations
-├── CogniteSdk.Types.Extensions/         # Type definitions
-├── Test/
-│   └── CogniteSdk.Extensions.Tests/     # 127 unit tests
-├── Examples/
-│   └── DataModeling/                    # Usage examples
-├── docs/
-│   └── extensions/
-│       ├── PULL_REQUESTS.md             # All 9 PRs described
-│       ├── CURSOR_SUBMISSION_GUIDE.md   # AI agent instructions
-│       └── FEATURE_PARITY_ANALYSIS.md   # Python SDK comparison
-├── CONTRIBUTING_EXTENSIONS.md           # This file
-└── cognite-sdk-dotnet.sln               # Solution file (includes extensions)
+```csharp
+var filter = FilterBuilder.Create()
+    .HasData(myView)
+    .And(FilterBuilder.Create().Equals(myView, "status", "active"))
+    .Build();
 ```
 
----
+### 2. Sync API Extensions
+
+**Location**: `CogniteSdk.Types/DataModels/Query/Query.cs`
+
+Extensions to `SyncQuery` for sync modes and backfill sorting. The official SDK has `SyncQuery` but lacks:
+- `SyncMode` enum (onePhase, twoPhase, noBackfill)
+- `SyncBackfillSort` class for optimized backfill ordering
+- `AllowExpiredCursorsAndAcceptMissedDeletes` property
+
+```csharp
+var syncQuery = new SyncQuery
+{
+    Mode = SyncMode.twoPhase,
+    BackfillSort = new[] { new SyncBackfillSort { Property = propPath, Direction = SortDirection.ascending } },
+    AllowExpiredCursorsAndAcceptMissedDeletes = true
+};
+```
+
+### 3. GraphQL Resource
+
+**Location**: 
+- Types: `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs`
+- Resource: `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs`
+
+A dedicated resource for executing GraphQL queries against CDF Data Models. The official SDK has no GraphQL wrapper.
+
+```csharp
+var graphql = new GraphQLResource(httpClient, project, baseUrl, tokenProvider);
+var result = await graphql.QueryAsync<MyType>(space, modelId, version, "{ listMyView { items { name } } }");
+```
+
+## What Was NOT Changed
+
+The following features **already exist** in the official SDK and were not modified:
+- Search API (`DataModelsResource.SearchInstances<T>()`)
+- Aggregate API (`DataModelsResource.AggregateInstances()`)
+- Query API (`DataModelsResource.QueryInstances<T>()`)
+- Sync API (`DataModelsResource.SyncInstances<T>()`)
+- Filter types (`EqualsFilter`, `AndFilter`, `HasDataFilter`, etc.)
+- Query types (`QueryNodeTableExpression`, `QueryEdgeTableExpression`, etc.)
+
+## Limitations
+
+### IAsyncEnumerable Streaming
+
+`IAsyncEnumerable` streaming was not implemented because:
+- The SDK targets .NET Standard 2.0
+- .NET Standard 2.0 uses C# 7.3
+- `IAsyncEnumerable` requires C# 8.0+
+
+To add streaming support, the SDK would need to target a newer .NET version or provide a separate extension package targeting .NET 5.0+.
 
 ## Running Tests
 
-### Unit Tests (No CDF Access Required)
-
-The extensions include 127 unit tests that mock HTTP calls - no CDF credentials needed:
+Unit tests for the new functionality:
 
 ```bash
-cd cognite-sdk-dotnet
-git checkout feature/data-modeling-extensions
-dotnet test Test/CogniteSdk.Extensions.Tests/CogniteSdk.Extensions.Tests.csproj
-# Expected: 127 tests pass
+# Run only unit tests (no CDF credentials required)
+dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj --filter "FullyQualifiedName~Test.CSharp.Unit"
 ```
 
-### Integration Tests (Requires CDF Access)
+Integration tests require CDF credentials (see `test_auth.sh`):
 
-The `Examples/DataModeling/` project serves as integration tests that call actual CDF endpoints.
-
-**Prerequisites:**
-- A CDF project with Data Modeling enabled
-- A data model with at least one view
-- Service principal credentials with `datamodels:read` scope
-
-**Setup:**
-
-1. Set environment variables:
 ```bash
-export CDF_PROJECT="your-project"
-export CDF_CLUSTER="westeurope-1"  # or your cluster
-export TENANT_ID="your-azure-tenant-id"
-export CLIENT_ID="your-app-client-id"
-export CLIENT_SECRET="your-client-secret"
+source test_auth.sh
+dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj
 ```
 
-2. Update the constants in `Examples/DataModeling/Program.cs` to match your data model:
-```csharp
-private const string Space = "your_space";
-private const string DataModelId = "YourDataModel";
-private const string DataModelVersion = "1";
-private const string ViewExternalId = "YourView";
-```
+## Building
 
-3. Run the examples:
 ```bash
-cd Examples/DataModeling
-dotnet run
+# Restore Paket dependencies
+dotnet tool restore
+
+# Build all projects
+dotnet build
+
+# Or build specific projects
+dotnet build CogniteSdk.Types/CogniteSdk.Types.csproj
+dotnet build CogniteSdk/src/CogniteSdk.csproj
 ```
 
-**What the integration tests cover:**
-- GraphQL queries against Data Models
-- QueryBuilder with filters and edge traversal
-- Sync API streaming
-- Search API with full-text queries
-- Aggregate API with groupBy and histograms
+## AI Assistance Disclosure
 
----
+This code was developed with AI assistance (Claude via Cursor). Human review and validation is recommended before using in production. See `docs/extensions/DEVELOPMENT_PROCESS.md` for details.
 
-## Code Quality Verification
+## File Summary
 
-All code has been verified:
-
-- [x] `ConfigureAwait(false)` on every await
-- [x] Null checks on all constructor parameters
-- [x] Input validation on all public methods
-- [x] XML documentation on all public APIs
-- [x] Request overloads validate same as helper methods
-- [x] No hardcoded credentials
-- [x] Shared HttpClient (no per-call instantiation)
-
----
-
-*Last updated: January 2026*
+| File | Description |
+|------|-------------|
+| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | Fluent filter builder |
+| `CogniteSdk.Types/DataModels/Query/Query.cs` | Extended with SyncMode, SyncBackfillSort |
+| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | GraphQL request/response types |
+| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | GraphQL query execution |
+| `CogniteSdk/test/csharp/FilterBuilderTests.cs` | FilterBuilder unit tests |
+| `CogniteSdk/test/csharp/SyncQueryTests.cs` | SyncQuery extension unit tests |

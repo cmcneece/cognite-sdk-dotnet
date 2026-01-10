@@ -1,232 +1,128 @@
-# Development Process: Data Modeling Extensions
+# Development Process Documentation
 
-**Author**: Colin McNeece  
-**Date**: January 2026  
-**AI Assistance**: Claude (Anthropic) via Cursor IDE
-
----
-
-## Executive Summary
-
-This document describes the development process used to create the Data Modeling extensions for the Cognite .NET SDK. The extensions were developed with AI assistance. This document describes the process, steps taken, and known limitations.
-
----
+This document describes the development process for the Data Modeling extensions.
 
 ## Development Phases
 
-| Phase                      | Focus                                                  |
-| -------------------------- | ------------------------------------------------------ |
-| **Research**               | Python SDK analysis, CDF API documentation review      |
-| **Initial Implementation** | Core APIs (FilterBuilder, GraphQL, Sync, QueryBuilder) |
-| **Feature Parity**         | Search, Aggregate, Query Parameters, Sync Modes        |
-| **Review Cycles**          | 3 rounds of simulated code review                      |
-| **Documentation**          | PR preparation, examples, guides                       |
+### Phase 1: Initial Development
 
----
+1. Created separate extension projects (`CogniteSdk.Extensions`, `CogniteSdk.Types.Extensions`)
+2. Implemented Search, Aggregate, Query, Sync, GraphQL, and FilterBuilder functionality
+3. Added 127 unit tests
+
+### Phase 2: SDK Analysis
+
+1. Analyzed existing official SDK for Data Modeling support
+2. Found that Search, Aggregate, Query, and Sync APIs already exist
+3. Found that filter types (`EqualsFilter`, `AndFilter`, etc.) already exist
+4. Identified net-new functionality: FilterBuilder, SyncMode, SyncBackfillSort, GraphQL
+
+### Phase 3: Restructuring
+
+1. Deleted duplicate functionality
+2. Moved remaining extensions into official SDK structure
+3. Updated FilterBuilder to return `IDMSFilter` instead of `object`
+4. Added `SyncMode` enum and `SyncBackfillSort` to existing `SyncQuery`
+5. Added GraphQL types and resource to official SDK locations
+6. Rewrote tests to use official SDK patterns
+7. Removed IAsyncEnumerable (requires C# 8.0+, SDK uses 7.3)
 
 ## AI Assistance Disclosure
 
-### How AI Was Used
+This code was developed with AI assistance (Claude via Cursor IDE).
 
-The development was conducted as a **pair programming session** between a human developer (Colin McNeece) and Claude (Anthropic's AI assistant) via the Cursor IDE.
+### What AI Did
 
-**AI contributions included:**
-- Writing initial code implementations based on requirements
-- Generating unit tests
-- Creating documentation
-- Identifying and fixing bugs
-- Responding to code review feedback
-- Researching CDF API specifications
+- Generated initial code implementations
+- Generated test cases
+- Performed SDK analysis to identify duplicate functionality
+- Refactored code to match SDK patterns
+- Generated documentation
 
-**Human contributions included:**
-- Defining requirements and priorities
-- Relied on integration and unit tests
-- Making architectural decisions
-- Validating against real CDF environments
-- Final approval of all changes
+### What AI Did NOT Do
 
-### AI Limitations Encountered
-
-1. **Initial Property Path Format**: AI initially generated 4-element property paths (`["space", "container", "version", "property"]`) instead of the correct 3-element format (`["space", "container/version", "property"]`). This was caught during testing and corrected.
-
-2. **HttpClient Per-Call Instantiation**: Early implementations created new `HttpClient` instances per call. This anti-pattern was identified during review and fixed to use shared instances.
-
-3. **Missing ConfigureAwait(false)**: Some async methods initially lacked `ConfigureAwait(false)`, which is critical for library code. A systematic review was required to add this to all 14+ await calls.
-
-4. **Validation Bypass**: Initial implementations had validation in helper methods but not in the underlying `*Async(Request)` overloads, allowing invalid requests to bypass validation. Fixed in review round 2.
-
----
+- No independent code execution or validation
+- No access to CDF environments for integration testing
+- No human code review was performed beyond reliance on tests
 
 ## Quality Assurance Process
 
-### 1. Simulated Code Review
+### Automated Checks
 
-We conducted **3 rounds of simulated code review** where a separate AI agent reviewed the code against the following standards:
-- ConfigureAwait(false) usage on all async calls
-- Input validation on public methods and constructors
-- Proper null checking and argument validation
-- Consistent error handling patterns
-- XML documentation completeness
-- Test coverage for edge cases
+| Check | Method | Result |
+|-------|--------|--------|
+| Compilation | `dotnet build` | Passed |
+| Unit tests | `dotnet test --filter "FullyQualifiedName~Test.CSharp.Unit"` | 34 tests passed |
+| Warnings | Build with `TreatWarningsAsErrors` | No warnings |
 
-| Round | Focus              | Issues Found            | Issues Fixed |
-| ----- | ------------------ | ----------------------- | ------------ |
-| 1     | Critical patterns  | 6 must-fix, 8 important | All fixed    |
-| 2     | Validation gaps    | 4 validation bypasses   | All fixed    |
-| 3     | Final verification | 0 blocking issues       | N/A          |
+### Manual Checks Performed
 
-### 2. Unit Test Coverage
+| Check | Status |
+|-------|--------|
+| Code follows SDK namespace conventions | Verified |
+| Code uses existing SDK types (`IDMSFilter`, `RawPropertyValue<T>`) | Verified |
+| C# 7.3 compatible (no C# 8.0+ features in SDK projects) | Verified |
+| No new Paket dependencies added | Verified |
+| XML documentation present on public APIs | Verified |
 
-| Component     | Tests   | Coverage Focus                           |
-| ------------- | ------- | ---------------------------------------- |
-| FilterBuilder | 32      | All filter types, edge cases, validation |
-| GraphQL       | 16      | Request/response serialization, errors   |
-| Sync          | 18      | Modes, cursors, validation               |
-| QueryBuilder  | 35      | Nodes, edges, parameters, traversal      |
-| Search        | 8       | Full-text, scoped, filtered              |
-| Aggregate     | 16      | All aggregation types, groupBy           |
-| **Total**     | **127** |                                          |
+### Checks NOT Performed
 
-### 3. Pattern Verification
+| Check | Reason |
+|-------|--------|
+| Integration tests with CDF | Requires credentials |
+| Human code review | Not performed |
+| Performance testing | Not performed |
+| Production validation | Not performed |
 
-We systematically verified these critical patterns across all code:
+## Known Limitations
 
-- [x] `ConfigureAwait(false)` on every await
-- [x] Null checks on all constructor parameters
-- [x] Input validation on all public methods
-- [x] Request overloads validate same as helper methods
-- [x] No hardcoded credentials
-- [x] Shared HttpClient instances
-- [x] Correct property path format (3-element)
-- [x] XML documentation on public APIs
+### Technical Limitations
 
-### 4. Feature Parity Analysis
+1. **No IAsyncEnumerable streaming**: SDK targets .NET Standard 2.0 (C# 7.3)
+2. **GraphQL resource is standalone**: Not integrated into F# Oryx pipeline
+3. **Unit tests only**: Integration tests require CDF credentials
 
-A comparison was conducted with the Python SDK:
+### Code Quality Notes
 
-| Feature       | Python SDK    | .NET Extension | Parity  |
-| ------------- | ------------- | -------------- | ------- |
-| FilterBuilder | ✅             | ✅              | ~95%    |
-| GraphQL       | ⚠️ Manual only | ✅ Wrapper      | N/A (Python has no wrapper) |
-| Sync API      | ✅             | ✅ + streaming  | ~100%   |
-| Query API     | ✅             | ✅              | ~98%    |
-| Search API    | ✅             | ✅              | ~100%   |
-| Aggregate API | ✅             | ✅              | ~100%   |
+1. `GraphQLResource` uses `HttpClient` directly instead of Oryx pipeline
+2. FilterBuilder uses anonymous objects internally but returns typed `IDMSFilter`
 
-See [FEATURE_PARITY_ANALYSIS.md](FEATURE_PARITY_ANALYSIS.md) for full details.
+## File Inventory
 
----
+### New Files Added
 
-## Known Limitations and Potential Issues
+| File | Lines | Description |
+|------|-------|-------------|
+| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | ~400 | Fluent filter builder |
+| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | ~130 | GraphQL types |
+| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | ~150 | GraphQL resource |
+| `CogniteSdk/test/csharp/FilterBuilderTests.cs` | ~240 | FilterBuilder tests |
+| `CogniteSdk/test/csharp/SyncQueryTests.cs` | ~110 | SyncQuery tests |
 
-### 1. No Production Integration Testing
+### Modified Files
 
-**Issue**: The extensions have been tested with unit tests (mocked HTTP) but have not undergone extensive testing against production CDF environments.
-
-**Mitigation**: 
-- Examples in `Examples/DataModeling/` can be run against real CDF
-- We recommend thorough integration testing before production use
-
-### 2. API Compatibility Not Verified Against All CDF Versions
-
-**Issue**: The extensions were developed against CDF API documentation as of January 2026. Older or newer CDF deployments may have API differences.
-
-**Mitigation**:
-- Request/response types use flexible `Dictionary<string, object?>` where appropriate
-- Exceptions include the original API error response
-
-### 3. No Performance Testing
-
-**Issue**: We have not conducted load testing or performance benchmarking.
-
-**Mitigation**:
-- `IAsyncEnumerable` streaming reduces memory pressure for large datasets
-- Shared `HttpClient` prevents connection exhaustion
-- Performance testing recommended before high-volume production use
-
-### 4. Limited Error Scenarios Tested
-
-**Issue**: Unit tests mock successful responses and some error cases, but not all possible CDF error responses.
-
-**Mitigation**:
-- Error handling uses standard patterns
-- Exceptions include context for debugging
-- Real-world error scenarios should be documented as encountered
-
-### 5. AI-Generated Code Patterns
-
-**Issue**: AI-generated code may contain subtle issues not caught by automated testing, such as:
-- Edge cases not considered
-- Non-idiomatic patterns
-- Potential performance inefficiencies
-
-**Mitigation**:
-- 3 review rounds were conducted
-- 127 unit tests were written
-- Community feedback is requested
-
----
-
-## Alignment with SDK Standards
-
-### Patterns Followed from Official SDK
-
-1. **Resource Class Pattern**: Extensions use the same `*Resource` class pattern as the official SDK
-2. **Async/Await**: All operations are async with proper cancellation support
-3. **Extension Methods**: `client.GraphQL()`, `client.Search()` etc. follow SDK conventions
-4. **Licensing**: Apache 2.0, matching the official SDK
-5. **Copyright Headers**: Standard Cognite copyright format
-
-### Deviations from Official SDK
-
-1. **Separate Projects**: Extensions are in `CogniteSdk.Extensions` and `CogniteSdk.Types.Extensions` rather than integrated into existing projects. This is intentional for easier review and potential rejection.
-
-2. **NuGet Dependencies**: Extensions use NuGet references to `CogniteSdk` rather than project references. This allows independent development but means extensions track a specific SDK version.
-
-3. **No Paket**: Extension projects use standard NuGet PackageReference rather than Paket. If merged, they would need to be converted.
-
----
+| File | Changes |
+|------|---------|
+| `CogniteSdk.Types/DataModels/Query/Query.cs` | Added SyncMode, SyncBackfillSort, extended SyncQuery |
 
 ## Recommendations for Reviewers
 
-### Critical Review Areas
+1. **Verify SDK patterns**: Check that the code follows existing SDK conventions
+2. **Test with real CDF**: Run integration tests with CDF credentials
+3. **Review GraphQL resource**: Consider if it should integrate with Oryx pipeline
+4. **Consider IAsyncEnumerable**: If streaming is needed, may require SDK target upgrade
 
-1. **Security**: Ensure no credential leaks, proper token handling
-2. **Thread Safety**: Verify shared resources are thread-safe
-3. **Memory Leaks**: Check for proper disposal patterns
-4. **API Correctness**: Validate request/response formats against CDF API docs
+## Build and Test Commands
 
-### Suggested Testing
+```bash
+# Build
+dotnet build
 
-1. Run unit tests: `dotnet test Test/CogniteSdk.Extensions.Tests/`
-2. Run examples against a test CDF project
-3. Test with your specific data models and use cases
-4. Review error handling with invalid inputs
+# Run unit tests (no credentials required)
+dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj \
+    --filter "FullyQualifiedName~Test.CSharp.Unit"
 
-### Questions to Ask
-
-- Does the API feel idiomatic for .NET developers?
-- Are there missing features your use case requires?
-- Do the patterns align with Cognite SDK conventions?
-- Are there security concerns not addressed?
-
----
-
-## Summary
-
-These Data Modeling extensions were developed with AI assistance. The following steps were taken:
-
-1. 127 unit tests were written
-2. 3 review rounds were conducted against documented standards
-3. Code was verified against CDF API documentation
-
-The following has NOT been done:
-
-1. Production integration testing against live CDF environments
-2. Performance or load testing
-3. Testing against all CDF API versions
-4. Independent human code review (beyond reliance on tests)
-
----
-
-*This document is part of the Data Modeling extensions contribution. See [CONTRIBUTING_EXTENSIONS.md](../../CONTRIBUTING_EXTENSIONS.md) for the full contribution guide.*
+# Run integration tests (requires credentials)
+source test_auth.sh
+dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj
+```
