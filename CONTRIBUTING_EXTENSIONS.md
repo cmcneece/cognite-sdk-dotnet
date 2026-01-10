@@ -31,11 +31,9 @@ This repository contains proposed Data Modeling extensions for the official [Cog
 
 **Goal**: Get feedback from colleagues before any external submission.
 
-- Share this private repo with team members
-- Gather feedback on approach and code quality
+- Share this repo with team members
+- Gather feedback on approach and code
 - Address concerns before proceeding
-
-**Duration**: 1-2 weeks
 
 ### Phase 2: Community Discussion
 
@@ -64,10 +62,10 @@ This code was developed with AI assistance (Claude/Cursor). All PRs will include
 
 > ⚠️ **AI Assistance Disclosure**
 > 
-> This code was developed with the assistance of AI tools. All code has been:
-> - Reviewed and validated by a human developer
-> - Tested with 127 unit tests
-> - Verified against CDF API documentation
+> This code was developed with the assistance of AI tools (Claude/Cursor).
+> - 127 unit tests were written
+> - Code was checked against CDF API documentation
+> - No independent human code review was performed beyond reliance on tests
 
 ---
 

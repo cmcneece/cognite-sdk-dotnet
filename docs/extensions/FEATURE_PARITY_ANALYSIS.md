@@ -75,7 +75,7 @@ var filter = FilterBuilder.Create()
 - ✅ Fluent builder pattern
 - ✅ Composable with logical operators
 - ✅ HasData filter
-- ✅ ViewIdentifier overloads (cleaner API)
+- ✅ ViewIdentifier overloads
 - ✅ Input validation on all methods
 - ✅ ToString() for debugging
 
@@ -147,7 +147,7 @@ if (result.HasErrors)
 | Introspection   | ⚠️ Manual      | ✅ `IntrospectAsync`    |                          |
 | Mutations       | ⚠️ Manual      | ⚠️ Via raw query        | Both require raw GraphQL |
 
-**Parity**: .NET **exceeds** Python SDK (has dedicated wrapper)
+**Parity**: N/A (Python SDK has no dedicated GraphQL wrapper)
 
 ---
 
@@ -213,7 +213,7 @@ await foreach (var batch in sync.StreamChangesAsync(view, pollIntervalMs: 5000, 
 | backfillSort        | ✅             | ✅                     |                           |
 | allowExpiredCursors | ✅             | ✅                     |                           |
 
-**Parity**: ~100% (full feature parity with superior streaming)
+**Parity**: Sync API features implemented. .NET adds IAsyncEnumerable streaming.
 
 ---
 
@@ -278,8 +278,8 @@ var result = await query
 | nodeFilter          | ✅               | ✅                   |                        |
 | terminationFilter   | ✅               | ✅                   |                        |
 | limitEach           | ✅               | ✅                   |                        |
-| Fluent API          | ❌ Dict-based    | ✅ Chainable         | .NET is more ergonomic |
-| Type-safe direction | ❌ String        | ✅ Enum              | .NET is safer          |
+| Fluent API          | ❌ Dict-based    | ✅ Chainable         |                        |
+| Type-safe direction | ❌ String        | ✅ Enum              |                        |
 
 **Parity**: ~98% (full feature parity achieved)
 
@@ -465,7 +465,7 @@ await client.DataModels.Instances.DeleteAsync(...);
 | Sync API                | ✅          | ✅        | **NEW: SyncResource + streaming**                |
 | Search API              | ✅          | ✅        | **NEW: SearchResource**                          |
 | Aggregate API           | ✅          | ✅        | **NEW: AggregateResource + convenience methods** |
-| GraphQL                 | ⚠️ Manual   | ✅        | **NEW: GraphQLResource** (better than Python!)   |
+| GraphQL                 | ⚠️ Manual   | ✅        | **NEW: GraphQLResource** (Python has no wrapper) |
 
 ---
 
@@ -513,22 +513,23 @@ The following Python SDK features were **intentionally not included** in this PR
 
 ---
 
-## Conclusion
+## Summary
 
-The .NET SDK extensions successfully achieve **full feature parity** with the Python SDK for Data Modeling workloads. The implementation provides:
+The .NET SDK extensions implement the following features that exist in the Python SDK:
 
-1. **Complete feature parity** for all query interfaces (Filter, Query, Sync, Search, Aggregate)
-2. **Query parameters** for optimized query plan reuse
+1. **Filter construction** for all query interfaces (Filter, Query, Sync, Search, Aggregate)
+2. **Query parameters** for parameterized queries
 3. **Recursive edge traversal** with `maxDistance`, `nodeFilter`, `terminationFilter`
-4. **All sync modes** (onePhase, twoPhase, noBackfill) with backfillSort
+4. **Sync modes** (onePhase, twoPhase, noBackfill) with backfillSort
 5. **Full-text search** with property scoping and filtering
-6. **Comprehensive aggregations** with convenience methods (Count, Sum, Avg, Min, Max, Histogram)
-7. **Improved ergonomics** with fluent APIs and strong typing
-8. **Better async support** with `IAsyncEnumerable` streaming
-9. **GraphQL wrapper** that exceeds Python SDK capabilities
-10. **Production-ready code** with 127 unit tests and proper validation
+6. **Aggregations** with Count, Sum, Avg, Min, Max, Histogram
+7. **Fluent APIs** using builder patterns
+8. **IAsyncEnumerable** streaming for Sync API
+9. **GraphQL wrapper** (Python SDK does not have a wrapper)
 
-The extensions enable .NET developers to build the same Data Modeling applications that were previously only practical in Python, with no feature compromises.
+**Test coverage**: 127 unit tests
+
+**Not implemented**: GeoJSON filters, MatchAll filter (can use empty filter instead)
 
 ---
 

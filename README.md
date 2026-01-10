@@ -32,7 +32,7 @@ dotnet test Test/CogniteSdk.Extensions.Tests/  # 127 tests
 
 📖 See [CONTRIBUTING_EXTENSIONS.md](CONTRIBUTING_EXTENSIONS.md) for full documentation.
 
-> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). All code has been reviewed, tested (127 unit tests), and verified against CDF API documentation.
+> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). 127 unit tests were written. No independent human code review was performed beyond reliance on tests.
 
 ---
 
