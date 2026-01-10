@@ -123,5 +123,6 @@ This code was developed with AI assistance (Claude via Cursor). Human review and
 | `CogniteSdk.Types/DataModels/Query/Query.cs` | Extended with SyncMode, SyncBackfillSort |
 | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | GraphQL request/response types |
 | `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | GraphQL query execution |
-| `CogniteSdk/test/csharp/FilterBuilderTests.cs` | FilterBuilder unit tests |
-| `CogniteSdk/test/csharp/SyncQueryTests.cs` | SyncQuery extension unit tests |
+| `CogniteSdk/test/csharp/FilterBuilderTests.cs` | FilterBuilder unit tests (26 tests) |
+| `CogniteSdk/test/csharp/SyncQueryTests.cs` | SyncQuery extension unit tests (8 tests) |
+| `CogniteSdk/test/csharp/DataModelsExtensionsIntegrationTests.cs` | Integration tests (11 tests) |

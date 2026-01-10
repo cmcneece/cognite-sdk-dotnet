@@ -35,10 +35,10 @@ The following features were found to **already exist** in the official SDK:
 
 ### API Limitations Discovered
 
-| Feature                    | Status                                                                       |
-| -------------------------- | ---------------------------------------------------------------------------- |
-| SyncMode (`mode` field)    | Types added but not yet supported by CDF API on bluefield cluster            |
-| HasDataFilter in Query     | SDK serialization produces `{"hasData":{"models":[...]}}` but API expects array |
+| Feature                 | Status                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| SyncMode (`mode` field) | Types added but not yet supported by CDF API on bluefield cluster               |
+| HasDataFilter in Query  | SDK serialization produces `{"hasData":{"models":[...]}}` but API expects array |
 
 Note: SyncMode enum and properties were added for forward compatibility. The code compiles and unit tests pass, but the API feature is not yet available on all CDF instances.
 
@@ -124,16 +124,16 @@ var schema = await graphql.IntrospectAsync(space, modelId, version);
 
 ### Unit Tests (no CDF credentials required)
 
-| Test File               | Tests | Description             |
-| ----------------------- | ----- | ----------------------- |
+| Test File               | Tests | Description              |
+| ----------------------- | ----- | ------------------------ |
 | `FilterBuilderTests.cs` | 26    | FilterBuilder unit tests |
 | `SyncQueryTests.cs`     | 8     | SyncQuery unit tests     |
-| **Total Unit**          | 34    |                         |
+| **Total Unit**          | 34    |                          |
 
 ### Integration Tests (require CDF credentials)
 
-| Test File                                | Tests | Description                  |
-| ---------------------------------------- | ----- | ---------------------------- |
+| Test File                                 | Tests | Description                  |
+| ----------------------------------------- | ----- | ---------------------------- |
 | `DataModelsExtensionsIntegrationTests.cs` | 11    | FilterBuilder, Sync, GraphQL |
 
 Run with: `source test_auth_env.sh && dotnet test --filter "DataModelsExtensionsTest"`
