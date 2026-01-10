@@ -77,11 +77,15 @@ This code was developed with AI assistance (Claude via Cursor IDE).
 
 Integration tests were executed against a CDF project on bluefield cluster:
 
-| Test Suite           | Tests | Result |
-| -------------------- | ----- | ------ |
-| DataModels           | 10    | Passed |
-| FilterBuilder (Unit) | 26    | Passed |
-| SyncQuery (Unit)     | 8     | Passed |
+| Test Suite                      | Tests | Result |
+| ------------------------------- | ----- | ------ |
+| DataModels (SDK existing)       | 10    | Passed |
+| FilterBuilder (Unit)            | 26    | Passed |
+| SyncQuery (Unit)                | 8     | Passed |
+| FilterBuilder (Integration)     | 7     | Passed |
+| SyncQuery (Integration)         | 2     | Passed |
+| GraphQL (Integration)           | 3     | Passed |
+| **Total**                       | 56    | Passed |
 
 ## Known Limitations
 

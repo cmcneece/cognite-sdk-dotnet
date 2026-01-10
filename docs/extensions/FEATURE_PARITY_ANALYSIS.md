@@ -33,6 +33,15 @@ The following features were found to **already exist** in the official SDK:
 | -------------------------- | --------------------------------------------------------------------------- |
 | IAsyncEnumerable streaming | SDK targets .NET Standard 2.0 (C# 7.3), `IAsyncEnumerable` requires C# 8.0+ |
 
+### API Limitations Discovered
+
+| Feature                    | Status                                                                       |
+| -------------------------- | ---------------------------------------------------------------------------- |
+| SyncMode (`mode` field)    | Types added but not yet supported by CDF API on bluefield cluster            |
+| HasDataFilter in Query     | SDK serialization produces `{"hasData":{"models":[...]}}` but API expects array |
+
+Note: SyncMode enum and properties were added for forward compatibility. The code compiles and unit tests pass, but the API feature is not yet available on all CDF instances.
+
 ## FilterBuilder Details
 
 The `FilterBuilder` provides a fluent API for constructing DMS filters:
@@ -113,11 +122,21 @@ var schema = await graphql.IntrospectAsync(space, modelId, version);
 
 ## Test Coverage
 
-| Test File               | Tests | Description                              |
-| ----------------------- | ----- | ---------------------------------------- |
-| `FilterBuilderTests.cs` | 26    | FilterBuilder functionality              |
-| `SyncQueryTests.cs`     | 8     | SyncQuery extensions                     |
-| **Total**               | 34    | Unit tests (no CDF credentials required) |
+### Unit Tests (no CDF credentials required)
+
+| Test File               | Tests | Description             |
+| ----------------------- | ----- | ----------------------- |
+| `FilterBuilderTests.cs` | 26    | FilterBuilder unit tests |
+| `SyncQueryTests.cs`     | 8     | SyncQuery unit tests     |
+| **Total Unit**          | 34    |                         |
+
+### Integration Tests (require CDF credentials)
+
+| Test File                                | Tests | Description                  |
+| ---------------------------------------- | ----- | ---------------------------- |
+| `DataModelsExtensionsIntegrationTests.cs` | 11    | FilterBuilder, Sync, GraphQL |
+
+Run with: `source test_auth_env.sh && dotnet test --filter "DataModelsExtensionsTest"`
 
 ## Alignment with SDK Patterns
 
@@ -136,9 +155,9 @@ The extensions follow official SDK patterns:
 
 ### Architectural Deviations
 
-| Component           | SDK Pattern                       | Our Implementation             |
-| ------------------- | --------------------------------- | ------------------------------ |
-| `GraphQLResource`   | Inherits `Resource`, uses Oryx    | Standalone, uses `HttpClient`  |
-| GraphQL access      | `client.GraphQL`                  | Manual instantiation required  |
+| Component         | SDK Pattern                    | Our Implementation            |
+| ----------------- | ------------------------------ | ----------------------------- |
+| `GraphQLResource` | Inherits `Resource`, uses Oryx | Standalone, uses `HttpClient` |
+| GraphQL access    | `client.GraphQL`               | Manual instantiation required |
 
 **Rationale**: Integrating GraphQL into the Oryx pipeline would require modifying the F# layer (`Oryx.Cognite`). The standalone implementation was chosen to minimize scope while maintaining functionality.
