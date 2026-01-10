@@ -54,6 +54,8 @@ Open a GitHub Discussion on the official repo:
 
 See [docs/extensions/PULL_REQUESTS.md](docs/extensions/PULL_REQUESTS.md) for the 9 PR breakdown.
 
+See [docs/extensions/DEVELOPMENT_PROCESS.md](docs/extensions/DEVELOPMENT_PROCESS.md) for details on the development methodology, quality assurance, and known limitations.
+
 ---
 
 ## AI Assistance Disclosure
