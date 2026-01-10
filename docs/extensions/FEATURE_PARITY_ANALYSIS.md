@@ -4,12 +4,12 @@ This document provides technical details about the Data Modeling extensions in t
 
 ## Extensions Overview
 
-| Extension | Purpose | Python SDK Equivalent |
-|-----------|---------|----------------------|
-| FilterBuilder | Fluent API for constructing DMS filters | `cognite.client.data_modeling.filters` |
-| SyncMode | Sync mode control (onePhase, twoPhase, noBackfill) | `sync_mode` parameter |
-| SyncBackfillSort | Backfill sort specification for two-phase sync | `backfill_sort` parameter |
-| GraphQL Resource | Execute GraphQL queries against Data Models | `client.data_modeling.graphql` |
+| Extension        | Purpose                                            | Python SDK Equivalent                  |
+| ---------------- | -------------------------------------------------- | -------------------------------------- |
+| FilterBuilder    | Fluent API for constructing DMS filters            | `cognite.client.data_modeling.filters` |
+| SyncMode         | Sync mode control (onePhase, twoPhase, noBackfill) | `sync_mode` parameter                  |
+| SyncBackfillSort | Backfill sort specification for two-phase sync     | `backfill_sort` parameter              |
+| GraphQL Resource | Execute GraphQL queries against Data Models        | `client.data_modeling.graphql`         |
 
 ## FilterBuilder
 
@@ -198,28 +198,28 @@ POST {baseUrl}/api/v1/projects/{project}/models/spaces/{space}/datamodels/{exter
 
 ## Test Coverage
 
-| Test File | Tests | Description |
-|-----------|-------|-------------|
-| `FilterBuilderTests.cs` | 26 | Unit tests for all filter operations |
-| `SyncQueryTests.cs` | 13 | Unit tests for SyncMode and SyncBackfillSort |
-| `FilterBuilderIntegrationTests.cs` | 7 | Integration tests against live CDF |
-| `SyncGraphQLIntegrationTests.cs` | 5 | Integration tests for Sync and GraphQL |
-| **Total** | **51** | |
+| Test File                          | Tests  | Description                                  |
+| ---------------------------------- | ------ | -------------------------------------------- |
+| `FilterBuilderTests.cs`            | 26     | Unit tests for all filter operations         |
+| `SyncQueryTests.cs`                | 13     | Unit tests for SyncMode and SyncBackfillSort |
+| `FilterBuilderIntegrationTests.cs` | 7      | Integration tests against live CDF           |
+| `SyncGraphQLIntegrationTests.cs`   | 5      | Integration tests for Sync and GraphQL       |
+| **Total**                          | **51** |                                              |
 
 ## Known Limitations
 
-| Limitation | Reason |
-|------------|--------|
-| `SyncMode` may not work on all clusters | API feature not yet universally available |
+| Limitation                                       | Reason                                    |
+| ------------------------------------------------ | ----------------------------------------- |
+| `SyncMode` may not work on all clusters          | API feature not yet universally available |
 | GraphQL is standalone (not via `client.GraphQL`) | Would require F#/Oryx layer modifications |
-| No `IAsyncEnumerable` streaming | SDK targets .NET Standard 2.0 (C# 7.3) |
+| No `IAsyncEnumerable` streaming                  | SDK targets .NET Standard 2.0 (C# 7.3)    |
 
 ## SDK Compatibility
 
-| Aspect | Status |
-|--------|--------|
-| .NET Standard 2.0 | ✅ Compatible |
-| C# 7.3 | ✅ Compatible |
-| Paket dependencies | ✅ No new dependencies |
-| Namespace conventions | ✅ Uses `CogniteSdk.DataModels` |
-| Return types | ✅ Uses `IDMSFilter`, `RawPropertyValue<T>` |
+| Aspect                | Status                                     |
+| --------------------- | ------------------------------------------ |
+| .NET Standard 2.0     | ✅ Compatible                               |
+| C# 7.3                | ✅ Compatible                               |
+| Paket dependencies    | ✅ No new dependencies                      |
+| Namespace conventions | ✅ Uses `CogniteSdk.DataModels`             |
+| Return types          | ✅ Uses `IDMSFilter`, `RawPropertyValue<T>` |
