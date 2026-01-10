@@ -52,7 +52,7 @@ This code was developed with AI assistance (Claude via Cursor IDE).
 | Check       | Method                                                       | Result          |
 | ----------- | ------------------------------------------------------------ | --------------- |
 | Compilation | `dotnet build`                                               | Passed          |
-| Unit tests  | `dotnet test --filter "FullyQualifiedName~Test.CSharp.Unit"` | 34 tests passed |
+| Unit tests  | `dotnet test --filter "FullyQualifiedName~Test.CSharp.Unit"` | 39 tests passed |
 | Warnings    | Build with `TreatWarningsAsErrors`                           | No warnings     |
 
 ### Manual Checks Performed
@@ -81,11 +81,11 @@ Integration tests were executed against a CDF project on bluefield cluster:
 | --------------------------- | ----- | ------ |
 | DataModels (SDK existing)   | 10    | Passed |
 | FilterBuilder (Unit)        | 26    | Passed |
-| SyncQuery (Unit)            | 8     | Passed |
+| SyncQuery (Unit)            | 13    | Passed |
 | FilterBuilder (Integration) | 7     | Passed |
 | SyncQuery (Integration)     | 2     | Passed |
 | GraphQL (Integration)       | 3     | Passed |
-| **Total**                   | 56    | Passed |
+| **Total**                   | 61    | Passed |
 
 ## Known Limitations
 

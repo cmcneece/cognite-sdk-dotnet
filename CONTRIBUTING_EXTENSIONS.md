@@ -121,7 +121,7 @@ The extensions are designed to be submitted as **6 independent, human-reviewable
 |----|-------|-------|-------|-------|
 | 1 | FilterBuilder Fluent API | 1 | 471 | - |
 | 2 | FilterBuilder Unit Tests | 1 | 291 | 26 unit |
-| 3 | SyncQuery Extensions | 2 | ~185 | 8 unit |
+| 3 | SyncQuery Extensions | 2 | ~200 | 13 unit |
 | 4 | GraphQL Resource | 2 | 346 | - |
 | 5 | FilterBuilder Integration Tests | 1 | 519 | 7 integration |
 | 6 | Sync + GraphQL Integration Tests | 1 | 328 | 5 integration |
@@ -178,7 +178,7 @@ The extensions are designed to be submitted as **6 independent, human-reviewable
 - `SyncBackfillSort` property structure
 - Backward compatibility with existing `SyncQuery` usage
 
-**Tests**: 8 unit tests covering serialization and validation.
+**Tests**: 13 unit tests covering serialization and validation (including 5 property validation tests).
 
 **Note**: The `mode` field is not yet supported by CDF API on all clusters. Types are added for forward compatibility.
 
@@ -312,6 +312,6 @@ This code was developed with AI assistance (Claude via Cursor). Human review and
 | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | 144 | GraphQL request/response types |
 | `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | 202 | GraphQL query execution |
 | `CogniteSdk/test/csharp/FilterBuilderTests.cs` | 291 | FilterBuilder unit tests (26 tests) |
-| `CogniteSdk/test/csharp/SyncQueryTests.cs` | 134 | SyncQuery extension unit tests (8 tests) |
+| `CogniteSdk/test/csharp/SyncQueryTests.cs` | ~180 | SyncQuery extension unit tests (13 tests) |
 | `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` | 519 | FilterBuilder integration tests (7 tests) |
 | `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` | 328 | SyncQuery + GraphQL integration tests (5 tests) |

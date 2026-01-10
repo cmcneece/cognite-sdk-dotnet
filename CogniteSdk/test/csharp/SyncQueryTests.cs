@@ -1,6 +1,7 @@
 // Copyright 2024 Cognite AS
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using CogniteSdk.DataModels;
@@ -130,5 +131,52 @@ namespace Test.CSharp.Unit
             var json3 = JsonSerializer.Serialize(query3, options);
             Assert.Contains("noBackfill", json3);
         }
+
+        #region SyncBackfillSort Property Validation Tests
+
+        [Fact]
+        public void SyncBackfillSort_Property_NullThrowsArgumentNullException()
+        {
+            var sort = new SyncBackfillSort();
+
+            Assert.Throws<ArgumentNullException>(() => sort.Property = null);
+        }
+
+        [Fact]
+        public void SyncBackfillSort_Property_EmptyArrayThrowsArgumentException()
+        {
+            var sort = new SyncBackfillSort();
+
+            Assert.Throws<ArgumentException>(() => sort.Property = new string[] { });
+        }
+
+        [Fact]
+        public void SyncBackfillSort_Property_NullSegmentThrowsArgumentException()
+        {
+            var sort = new SyncBackfillSort();
+
+            Assert.Throws<ArgumentException>(() => sort.Property = new string[] { "space", null, "prop" });
+        }
+
+        [Fact]
+        public void SyncBackfillSort_Property_EmptySegmentThrowsArgumentException()
+        {
+            var sort = new SyncBackfillSort();
+
+            Assert.Throws<ArgumentException>(() => sort.Property = new string[] { "space", "", "prop" });
+        }
+
+        [Fact]
+        public void SyncBackfillSort_Property_ValidPathSucceeds()
+        {
+            var sort = new SyncBackfillSort
+            {
+                Property = new[] { "mySpace", "myView/1", "timestamp" }
+            };
+
+            Assert.Equal(3, System.Linq.Enumerable.Count(sort.Property));
+        }
+
+        #endregion
     }
 }

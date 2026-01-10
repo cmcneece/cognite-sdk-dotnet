@@ -24,13 +24,13 @@ This fork contains proposed Data Modeling extensions on the `feature/data-modeli
 ```bash
 git checkout feature/data-modeling-extensions
 dotnet build
-dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~Test.CSharp.Unit"  # 34 unit tests
+dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~Test.CSharp.Unit"  # 39 unit tests
 dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~IntegrationTests"  # 12 integration tests (requires CDF credentials)
 ```
 
 📖 See [CONTRIBUTING_EXTENSIONS.md](CONTRIBUTING_EXTENSIONS.md) for full documentation.
 
-> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). 46 tests written (34 unit + 12 integration). No independent human code review was performed beyond reliance on tests.
+> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). 51 tests written (39 unit + 12 integration). No independent human code review was performed beyond reliance on tests.
 
 ---
 

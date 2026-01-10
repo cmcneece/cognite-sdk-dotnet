@@ -1,7 +1,9 @@
 ﻿// Copyright 2023 Cognite AS
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace CogniteSdk.DataModels
@@ -79,10 +81,35 @@ namespace CogniteSdk.DataModels
     /// </summary>
     public class SyncBackfillSort
     {
+        private IEnumerable<string> _property;
+
         /// <summary>
         /// Property path to sort by, e.g., ["space", "container/version", "property"].
+        /// Cannot be null or empty.
         /// </summary>
-        public IEnumerable<string> Property { get; set; }
+        /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when value is empty or contains null/empty segments.</exception>
+        public IEnumerable<string> Property
+        {
+            get => _property;
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value), "Property path cannot be null");
+
+                var list = value.ToList();
+                if (list.Count == 0)
+                    throw new ArgumentException("Property path cannot be empty", nameof(value));
+
+                foreach (var segment in list)
+                {
+                    if (string.IsNullOrEmpty(segment))
+                        throw new ArgumentException("Property path segments cannot be null or empty", nameof(value));
+                }
+
+                _property = list;
+            }
+        }
 
         /// <summary>
         /// Sort direction.

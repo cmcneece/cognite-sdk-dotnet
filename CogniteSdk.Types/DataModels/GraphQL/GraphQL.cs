@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -61,7 +62,7 @@ namespace CogniteSdk.DataModels
         /// Returns true if the response contains errors.
         /// </summary>
         [JsonIgnore]
-        public bool HasErrors => Errors != null && System.Linq.Enumerable.Any(Errors);
+        public bool HasErrors => Errors?.Any() ?? false;
     }
 
     /// <summary>
@@ -91,7 +92,7 @@ namespace CogniteSdk.DataModels
         /// Returns true if the response contains errors.
         /// </summary>
         [JsonIgnore]
-        public bool HasErrors => Errors != null && System.Linq.Enumerable.Any(Errors);
+        public bool HasErrors => Errors?.Any() ?? false;
     }
 
     /// <summary>
