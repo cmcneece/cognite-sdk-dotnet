@@ -8,29 +8,29 @@ This document analyzes the Data Modeling features in the Cognite .NET SDK and th
 
 The following features were found to **already exist** in the official SDK:
 
-| Feature | Official SDK Location | Method |
-|---------|----------------------|--------|
-| Search API | `DataModelsResource` | `SearchInstances<T>()` |
-| Aggregate API | `DataModelsResource` | `AggregateInstances()` |
-| Query API | `DataModelsResource` | `QueryInstances<T>()` |
-| Sync API | `DataModelsResource` | `SyncInstances<T>()` |
-| Filter Types | `CogniteSdk.DataModels` | `EqualsFilter`, `AndFilter`, `HasDataFilter`, etc. |
-| Query Types | `CogniteSdk.DataModels` | `QueryNodeTableExpression`, `QueryEdgeTableExpression`, etc. |
+| Feature       | Official SDK Location   | Method                                                       |
+| ------------- | ----------------------- | ------------------------------------------------------------ |
+| Search API    | `DataModelsResource`    | `SearchInstances<T>()`                                       |
+| Aggregate API | `DataModelsResource`    | `AggregateInstances()`                                       |
+| Query API     | `DataModelsResource`    | `QueryInstances<T>()`                                        |
+| Sync API      | `DataModelsResource`    | `SyncInstances<T>()`                                         |
+| Filter Types  | `CogniteSdk.DataModels` | `EqualsFilter`, `AndFilter`, `HasDataFilter`, etc.           |
+| Query Types   | `CogniteSdk.DataModels` | `QueryNodeTableExpression`, `QueryEdgeTableExpression`, etc. |
 
 ### Extensions Added by This Fork
 
-| Feature | Location | Description |
-|---------|----------|-------------|
-| **FilterBuilder** | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | Fluent API for constructing filters |
-| **SyncMode enum** | `CogniteSdk.Types/DataModels/Query/Query.cs` | `onePhase`, `twoPhase`, `noBackfill` modes |
-| **SyncBackfillSort** | `CogniteSdk.Types/DataModels/Query/Query.cs` | Sort specification for backfill phase |
-| **GraphQL Types** | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | Request/response types |
-| **GraphQLResource** | `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | Execute GraphQL queries |
+| Feature              | Location                                                 | Description                                |
+| -------------------- | -------------------------------------------------------- | ------------------------------------------ |
+| **FilterBuilder**    | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs`     | Fluent API for constructing filters        |
+| **SyncMode enum**    | `CogniteSdk.Types/DataModels/Query/Query.cs`             | `onePhase`, `twoPhase`, `noBackfill` modes |
+| **SyncBackfillSort** | `CogniteSdk.Types/DataModels/Query/Query.cs`             | Sort specification for backfill phase      |
+| **GraphQL Types**    | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs`         | Request/response types                     |
+| **GraphQLResource**  | `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | Execute GraphQL queries                    |
 
 ### Not Implemented (Constraints)
 
-| Feature | Reason |
-|---------|--------|
+| Feature                    | Reason                                                                      |
+| -------------------------- | --------------------------------------------------------------------------- |
 | IAsyncEnumerable streaming | SDK targets .NET Standard 2.0 (C# 7.3), `IAsyncEnumerable` requires C# 8.0+ |
 
 ## FilterBuilder Details
@@ -46,22 +46,22 @@ var filter = FilterBuilder.Create()
 
 ### Supported Filter Methods
 
-| Method | Creates |
-|--------|---------|
-| `HasData()` | `HasDataFilter` |
-| `Equals()` | `EqualsFilter` |
-| `In()` | `InFilter` |
-| `Range()` | `RangeFilter` |
-| `Prefix()` | `PrefixFilter` |
-| `Exists()` | `ExistsFilter` |
-| `ContainsAny()` | `ContainsAnyFilter` |
-| `ContainsAll()` | `ContainsAllFilter` |
-| `And()` | `AndFilter` |
-| `Or()` | `OrFilter` |
-| `Not()` | `NotFilter` |
-| `Nested()` | `NestedFilter` |
-| `MatchAll()` | `MatchAllFilter` |
-| `Parameter()` | `ParameterizedPropertyValue` |
+| Method          | Creates                      |
+| --------------- | ---------------------------- |
+| `HasData()`     | `HasDataFilter`              |
+| `Equals()`      | `EqualsFilter`               |
+| `In()`          | `InFilter`                   |
+| `Range()`       | `RangeFilter`                |
+| `Prefix()`      | `PrefixFilter`               |
+| `Exists()`      | `ExistsFilter`               |
+| `ContainsAny()` | `ContainsAnyFilter`          |
+| `ContainsAll()` | `ContainsAllFilter`          |
+| `And()`         | `AndFilter`                  |
+| `Or()`          | `OrFilter`                   |
+| `Not()`         | `NotFilter`                  |
+| `Nested()`      | `NestedFilter`               |
+| `MatchAll()`    | `MatchAllFilter`             |
+| `Parameter()`   | `ParameterizedPropertyValue` |
 
 ## SyncQuery Extensions
 
@@ -83,11 +83,11 @@ public class SyncQuery : Query
 
 ### SyncMode Values
 
-| Value | Description |
-|-------|-------------|
-| `onePhase` | Default mode, single pass sync |
-| `twoPhase` | Two-stage sync for indexed filters |
-| `noBackfill` | Skip backfill, only new changes |
+| Value        | Description                        |
+| ------------ | ---------------------------------- |
+| `onePhase`   | Default mode, single pass sync     |
+| `twoPhase`   | Two-stage sync for indexed filters |
+| `noBackfill` | Skip backfill, only new changes    |
 
 ## GraphQL Resource
 
@@ -113,20 +113,20 @@ var schema = await graphql.IntrospectAsync(space, modelId, version);
 
 ## Test Coverage
 
-| Test File | Tests | Description |
-|-----------|-------|-------------|
-| `FilterBuilderTests.cs` | 24 | FilterBuilder functionality |
-| `SyncQueryTests.cs` | 10 | SyncQuery extensions |
-| **Total** | 34 | Unit tests (no CDF credentials required) |
+| Test File               | Tests | Description                              |
+| ----------------------- | ----- | ---------------------------------------- |
+| `FilterBuilderTests.cs` | 26    | FilterBuilder functionality              |
+| `SyncQueryTests.cs`     | 8     | SyncQuery extensions                     |
+| **Total**               | 34    | Unit tests (no CDF credentials required) |
 
 ## Alignment with SDK Patterns
 
 The extensions follow official SDK patterns:
 
-| Pattern | Status |
-|---------|--------|
-| Namespace: `CogniteSdk.DataModels` | ✅ Used |
-| Return types: `IDMSFilter`, `RawPropertyValue<T>` | ✅ Used |
-| C# version: 7.3 compatible | ✅ Compatible |
-| .NET Standard 2.0 | ✅ Compatible |
-| Paket dependencies | ✅ No new dependencies |
+| Pattern                                           | Status                |
+| ------------------------------------------------- | --------------------- |
+| Namespace: `CogniteSdk.DataModels`                | ✅ Used                |
+| Return types: `IDMSFilter`, `RawPropertyValue<T>` | ✅ Used                |
+| C# version: 7.3 compatible                        | ✅ Compatible          |
+| .NET Standard 2.0                                 | ✅ Compatible          |
+| Paket dependencies                                | ✅ No new dependencies |

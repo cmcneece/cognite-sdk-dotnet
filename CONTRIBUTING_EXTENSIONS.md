@@ -80,10 +80,20 @@ Unit tests for the new functionality:
 dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj --filter "FullyQualifiedName~Test.CSharp.Unit"
 ```
 
-Integration tests require CDF credentials (see `test_auth.sh`):
+Integration tests require CDF credentials. Create a `.env` file with your credentials:
 
 ```bash
-source test_auth.sh
+# .env file format
+CDF_CLUSTER=bluefield
+CDF_PROJECT=<your-project>
+TENANT_ID=<your-tenant-id>
+CLIENT_ID=<your-client-id>
+CLIENT_SECRET=<your-client-secret>
+```
+
+Then run:
+```bash
+source test_auth_env.sh
 dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj
 ```
 

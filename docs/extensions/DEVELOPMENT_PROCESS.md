@@ -49,30 +49,39 @@ This code was developed with AI assistance (Claude via Cursor IDE).
 
 ### Automated Checks
 
-| Check | Method | Result |
-|-------|--------|--------|
-| Compilation | `dotnet build` | Passed |
-| Unit tests | `dotnet test --filter "FullyQualifiedName~Test.CSharp.Unit"` | 34 tests passed |
-| Warnings | Build with `TreatWarningsAsErrors` | No warnings |
+| Check       | Method                                                       | Result          |
+| ----------- | ------------------------------------------------------------ | --------------- |
+| Compilation | `dotnet build`                                               | Passed          |
+| Unit tests  | `dotnet test --filter "FullyQualifiedName~Test.CSharp.Unit"` | 34 tests passed |
+| Warnings    | Build with `TreatWarningsAsErrors`                           | No warnings     |
 
 ### Manual Checks Performed
 
-| Check | Status |
-|-------|--------|
-| Code follows SDK namespace conventions | Verified |
+| Check                                                              | Status   |
+| ------------------------------------------------------------------ | -------- |
+| Code follows SDK namespace conventions                             | Verified |
 | Code uses existing SDK types (`IDMSFilter`, `RawPropertyValue<T>`) | Verified |
-| C# 7.3 compatible (no C# 8.0+ features in SDK projects) | Verified |
-| No new Paket dependencies added | Verified |
-| XML documentation present on public APIs | Verified |
+| C# 7.3 compatible (no C# 8.0+ features in SDK projects)            | Verified |
+| No new Paket dependencies added                                    | Verified |
+| XML documentation present on public APIs                           | Verified |
 
 ### Checks NOT Performed
 
-| Check | Reason |
-|-------|--------|
-| Integration tests with CDF | Requires credentials |
-| Human code review | Not performed |
-| Performance testing | Not performed |
+| Check                 | Reason        |
+| --------------------- | ------------- |
+| Human code review     | Not performed |
+| Performance testing   | Not performed |
 | Production validation | Not performed |
+
+### Integration Tests
+
+Integration tests were executed against a CDF project on bluefield cluster:
+
+| Test Suite          | Tests | Result |
+| ------------------- | ----- | ------ |
+| DataModels          | 10    | Passed |
+| FilterBuilder (Unit)| 26    | Passed |
+| SyncQuery (Unit)    | 8     | Passed |
 
 ## Known Limitations
 
@@ -91,18 +100,18 @@ This code was developed with AI assistance (Claude via Cursor IDE).
 
 ### New Files Added
 
-| File | Lines | Description |
-|------|-------|-------------|
-| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | ~400 | Fluent filter builder |
-| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | ~130 | GraphQL types |
-| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | ~150 | GraphQL resource |
-| `CogniteSdk/test/csharp/FilterBuilderTests.cs` | ~240 | FilterBuilder tests |
-| `CogniteSdk/test/csharp/SyncQueryTests.cs` | ~110 | SyncQuery tests |
+| File                                                     | Lines | Description           |
+| -------------------------------------------------------- | ----- | --------------------- |
+| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs`     | ~400  | Fluent filter builder |
+| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs`         | ~130  | GraphQL types         |
+| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | ~150  | GraphQL resource      |
+| `CogniteSdk/test/csharp/FilterBuilderTests.cs`           | ~240  | FilterBuilder tests   |
+| `CogniteSdk/test/csharp/SyncQueryTests.cs`               | ~110  | SyncQuery tests       |
 
 ### Modified Files
 
-| File | Changes |
-|------|---------|
+| File                                         | Changes                                              |
+| -------------------------------------------- | ---------------------------------------------------- |
 | `CogniteSdk.Types/DataModels/Query/Query.cs` | Added SyncMode, SyncBackfillSort, extended SyncQuery |
 
 ## Recommendations for Reviewers
@@ -122,7 +131,24 @@ dotnet build
 dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj \
     --filter "FullyQualifiedName~Test.CSharp.Unit"
 
-# Run integration tests (requires credentials)
-source test_auth.sh
+# Run integration tests (requires .env file with credentials)
+source test_auth_env.sh
 dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj
+
+# Or use the convenience script
+./run_integration_tests.sh
 ```
+
+### Setting Up Credentials
+
+Create a `.env` file in the repository root:
+
+```bash
+CDF_CLUSTER=bluefield
+CDF_PROJECT=<your-project>
+TENANT_ID=<your-azure-tenant-id>
+CLIENT_ID=<your-service-principal-client-id>
+CLIENT_SECRET=<your-service-principal-secret>
+```
+
+The `.env` file is gitignored and will not be committed.
