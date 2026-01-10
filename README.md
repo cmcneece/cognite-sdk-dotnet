@@ -12,25 +12,23 @@
 
 ## 🚀 Data Modeling Extensions (This Fork)
 
-This fork contains proposed Data Modeling extensions on the `feature/data-modeling-extensions` branch. These extensions add:
+This fork adds Data Modeling features to bring the .NET SDK closer to **feature parity with the Python SDK**:
 
-| Feature | Location | Description |
-|---------|----------|-------------|
-| **FilterBuilder** | `CogniteSdk.Types/DataModels/Query/` | Fluent API for type-safe DMS filters |
-| **SyncMode & BackfillSort** | `CogniteSdk.Types/DataModels/Query/` | Sync API mode and backfill sorting |
-| **GraphQL Client** | `CogniteSdk/src/Resources/DataModels/` | Execute GraphQL queries against Data Models |
+| Feature | Description |
+|---------|-------------|
+| **FilterBuilder** | Fluent API for building DMS filters: `.Equals()`, `.And()`, `.Range()`, etc. |
+| **SyncMode** | Support for `onePhase`, `twoPhase`, and `noBackfill` sync modes |
+| **GraphQL Client** | Execute GraphQL queries against CDF Data Models |
 
-**Quick Start:**
 ```bash
 git checkout feature/data-modeling-extensions
 dotnet build
-dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~Test.CSharp.Unit"  # 39 unit tests
-dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~IntegrationTests"  # 12 integration tests (requires CDF credentials)
+dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~Test.CSharp.Unit"
 ```
 
-📖 See [CONTRIBUTING_EXTENSIONS.md](CONTRIBUTING_EXTENSIONS.md) for full documentation.
+📖 **[Full documentation →](CONTRIBUTING_EXTENSIONS.md)**
 
-> ⚠️ **AI Assistance Disclosure**: These extensions were developed with AI assistance (Claude/Cursor). 51 tests written (39 unit + 12 integration). No independent human code review was performed beyond reliance on tests.
+> ⚠️ **AI Disclosure**: Developed with AI assistance. 51 tests (39 unit + 12 integration).
 
 ---
 

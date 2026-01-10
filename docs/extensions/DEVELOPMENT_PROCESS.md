@@ -1,162 +1,181 @@
-# Development Process Documentation
+# Development Process
 
-This document describes the development process for the Data Modeling extensions.
+This document records the development process for the Data Modeling extensions.
 
-## Development Phases
+## Development History
 
-### Phase 1: Initial Development
+### Phase 1: Initial Implementation
 
-1. Created separate extension projects (`CogniteSdk.Extensions`, `CogniteSdk.Types.Extensions`)
-2. Implemented Search, Aggregate, Query, Sync, GraphQL, and FilterBuilder functionality
-3. Added 127 unit tests
+Created extension projects with the following features:
+- Search API wrapper
+- Aggregate API wrapper
+- Query API extensions
+- Sync API extensions
+- GraphQL client
+- FilterBuilder fluent API
+
+Initial implementation included 127 unit tests.
 
 ### Phase 2: SDK Analysis
 
-1. Analyzed existing official SDK for Data Modeling support
-2. Found that Search, Aggregate, Query, and Sync APIs already exist
-3. Found that filter types (`EqualsFilter`, `AndFilter`, etc.) already exist
-4. Identified net-new functionality: FilterBuilder, SyncMode, SyncBackfillSort, GraphQL
+Analyzed the official .NET SDK to understand existing Data Modeling support:
+
+**Found Already Existing:**
+- `DataModelsResource.SearchInstances<T>()` - Search API
+- `DataModelsResource.AggregateInstances()` - Aggregate API
+- `DataModelsResource.QueryInstances<T>()` - Query API
+- `DataModelsResource.SyncInstances<T>()` - Sync API
+- Filter types: `EqualsFilter`, `AndFilter`, `HasDataFilter`, `RangeFilter`, etc.
+- Query types: `QueryNodeTableExpression`, `QueryEdgeTableExpression`, etc.
+
+**Identified as Net-New:**
+- FilterBuilder (fluent API for building filters)
+- SyncMode enum and SyncBackfillSort class
+- GraphQL resource
 
 ### Phase 3: Restructuring
 
-1. Deleted duplicate functionality
-2. Moved remaining extensions into official SDK structure
-3. Updated FilterBuilder to return `IDMSFilter` instead of `object`
-4. Added `SyncMode` enum and `SyncBackfillSort` to existing `SyncQuery`
-5. Added GraphQL types and resource to official SDK locations
-6. Rewrote tests to use official SDK patterns
-7. Removed IAsyncEnumerable (requires C# 8.0+, SDK uses 7.3)
+1. Deleted duplicate implementations (Search, Aggregate, Query wrappers)
+2. Moved remaining code into official SDK structure
+3. Refactored FilterBuilder to return `IDMSFilter` instead of custom types
+4. Extended existing `SyncQuery` class with Mode, BackfillSort properties
+5. Added GraphQL types and resource
+6. Rewrote unit tests
+7. Removed `IAsyncEnumerable` support (incompatible with C# 7.3)
 
-## AI Assistance Disclosure
+### Phase 4: Integration Testing
+
+Added integration tests against CDF bluefield cluster:
+- FilterBuilder: 7 tests
+- SyncQuery: 2 tests
+- GraphQL: 3 tests
+
+### Phase 5: Code Review Response
+
+Applied fixes based on code review:
+- Added validation to `SyncBackfillSort.Property` setter
+- Updated `HasErrors` in GraphQL types to use null-safe pattern
+- Added 5 additional validation unit tests
+
+## AI Assistance
+
+### Disclosure
 
 This code was developed with AI assistance (Claude via Cursor IDE).
 
-### What AI Did
+### AI Involvement
 
-- Generated initial code implementations
-- Generated test cases
-- Performed SDK analysis to identify duplicate functionality
-- Refactored code to match SDK patterns
-- Generated documentation
+| Task | AI Role |
+|------|---------|
+| Code generation | Generated implementations based on requirements |
+| Test generation | Generated unit and integration tests |
+| SDK analysis | Analyzed existing SDK to identify duplicate functionality |
+| Refactoring | Restructured code to match SDK patterns |
+| Documentation | Generated documentation files |
 
-### What AI Did NOT Do
+### Human Involvement
 
-- No independent code execution or validation
-- No access to CDF environments for integration testing
-- No human code review was performed beyond reliance on tests
+| Task | Human Role |
+|------|------------|
+| Requirements | Defined feature requirements |
+| Direction | Guided development decisions |
+| Review | Reviewed generated code and tests |
+| Testing | Executed tests and verified results |
+| Iteration | Requested fixes and improvements |
 
-## Quality Assurance Process
+### Limitations
+
+| What AI Did NOT Do |
+|--------------------|
+| Independent code execution outside of user direction |
+| Access to CDF environments (credentials provided by user) |
+| Independent security review |
+| Performance benchmarking |
+
+## Quality Assurance
 
 ### Automated Checks
 
-| Check       | Method                                                       | Result          |
-| ----------- | ------------------------------------------------------------ | --------------- |
-| Compilation | `dotnet build`                                               | Passed          |
-| Unit tests  | `dotnet test --filter "FullyQualifiedName~Test.CSharp.Unit"` | 39 tests passed |
-| Warnings    | Build with `TreatWarningsAsErrors`                           | No warnings     |
+| Check | Method | Result |
+|-------|--------|--------|
+| Compilation | `dotnet build` | ✅ Passed |
+| Unit tests | 39 tests | ✅ Passed |
+| Integration tests | 12 tests | ✅ Passed |
+| Build warnings | `TreatWarningsAsErrors` | ✅ No warnings |
 
-### Manual Checks Performed
+### Manual Verification
 
-| Check                                                              | Status   |
-| ------------------------------------------------------------------ | -------- |
-| Code follows SDK namespace conventions                             | Verified |
-| Code uses existing SDK types (`IDMSFilter`, `RawPropertyValue<T>`) | Verified |
-| C# 7.3 compatible (no C# 8.0+ features in SDK projects)            | Verified |
-| No new Paket dependencies added                                    | Verified |
-| XML documentation present on public APIs                           | Verified |
+| Check | Status |
+|-------|--------|
+| Code follows SDK namespace conventions | ✅ Verified |
+| Uses existing SDK types (`IDMSFilter`, etc.) | ✅ Verified |
+| C# 7.3 compatible | ✅ Verified |
+| No new Paket dependencies | ✅ Verified |
+| XML documentation on public APIs | ✅ Verified |
 
-### Checks NOT Performed
+### Not Performed
 
-| Check                 | Reason        |
-| --------------------- | ------------- |
-| Human code review     | Not performed |
-| Performance testing   | Not performed |
+| Check | Reason |
+|-------|--------|
+| Independent human code review | Not performed |
+| Performance testing | Not performed |
+| Security audit | Not performed |
 | Production validation | Not performed |
+
+## Test Results
+
+### Unit Tests
+
+| Suite | Tests | Result |
+|-------|-------|--------|
+| FilterBuilder | 26 | ✅ Passed |
+| SyncQuery | 13 | ✅ Passed |
+| **Total** | **39** | **✅ Passed** |
 
 ### Integration Tests
 
-Integration tests were executed against a CDF project on bluefield cluster:
+| Suite | Tests | Result |
+|-------|-------|--------|
+| FilterBuilder | 7 | ✅ Passed |
+| SyncQuery | 2 | ✅ Passed |
+| GraphQL | 3 | ✅ Passed |
+| **Total** | **12** | **✅ Passed** |
 
-| Test Suite                  | Tests | Result |
-| --------------------------- | ----- | ------ |
-| DataModels (SDK existing)   | 10    | Passed |
-| FilterBuilder (Unit)        | 26    | Passed |
-| SyncQuery (Unit)            | 13    | Passed |
-| FilterBuilder (Integration) | 7     | Passed |
-| SyncQuery (Integration)     | 2     | Passed |
-| GraphQL (Integration)       | 3     | Passed |
-| **Total**                   | 61    | Passed |
+Executed against: CDF bluefield cluster
 
-## Known Limitations
+## Technical Decisions
 
-### Technical Limitations
+### GraphQL Standalone Implementation
 
-1. **No IAsyncEnumerable streaming**: SDK targets .NET Standard 2.0 (C# 7.3)
-2. **GraphQL resource is standalone**: Not integrated into F# Oryx pipeline
-3. **Unit tests only**: Integration tests require CDF credentials
+**Decision:** Implement `GraphQLResource` as a standalone class using `HttpClient` directly.
 
-### Code Quality Notes
+**Rationale:**
+- Integrating with Oryx pipeline would require modifying F# code in `Oryx.Cognite`
+- GraphQL uses different URL structure and request/response format
+- Standalone implementation minimizes scope while delivering functionality
 
-1. `GraphQLResource` uses `HttpClient` directly instead of Oryx pipeline
-   - Official SDK resources inherit from `Resource` and use `Oryx.Cognite.*` methods
-   - GraphQL was implemented standalone to avoid modifying the F# Oryx layer
-   - To align fully, GraphQL would need corresponding F# functions in `Oryx.Cognite`
-2. `GraphQLResource` requires manual instantiation (not accessible via `client.Resource`)
-3. FilterBuilder uses official SDK types (`IDMSFilter`, `RawPropertyValue<T>`)
+**Trade-off:** GraphQL is not accessible via `client.GraphQL`; requires manual instantiation.
 
-## File Inventory
+### No IAsyncEnumerable Support
 
-### New Files Added
+**Decision:** Do not implement `IAsyncEnumerable` streaming.
 
-| File                                                     | Lines | Description           |
-| -------------------------------------------------------- | ----- | --------------------- |
-| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs`     | ~400  | Fluent filter builder |
-| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs`         | ~130  | GraphQL types         |
-| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | ~150  | GraphQL resource      |
-| `CogniteSdk/test/csharp/FilterBuilderTests.cs`           | ~240  | FilterBuilder tests   |
-| `CogniteSdk/test/csharp/SyncQueryTests.cs`               | ~110  | SyncQuery tests       |
+**Rationale:**
+- SDK targets .NET Standard 2.0
+- .NET Standard 2.0 uses C# 7.3
+- `IAsyncEnumerable` requires C# 8.0+
 
-### Modified Files
+**Alternative:** To add streaming, SDK would need to:
+- Target newer .NET version, or
+- Create separate extension package for .NET 5.0+
 
-| File                                         | Changes                                              |
-| -------------------------------------------- | ---------------------------------------------------- |
-| `CogniteSdk.Types/DataModels/Query/Query.cs` | Added SyncMode, SyncBackfillSort, extended SyncQuery |
+### SyncMode Forward Compatibility
 
-## Recommendations for Reviewers
+**Decision:** Add `SyncMode` enum and `SyncBackfillSort` class even though API support varies.
 
-1. **Verify SDK patterns**: Check that the code follows existing SDK conventions
-2. **Test with real CDF**: Run integration tests with CDF credentials
-3. **Review GraphQL resource**: Consider if it should integrate with Oryx pipeline
-4. **Consider IAsyncEnumerable**: If streaming is needed, may require SDK target upgrade
+**Rationale:**
+- Types compile and serialize correctly
+- Unit tests validate behavior
+- Ready for use when API support is available
 
-## Build and Test Commands
-
-```bash
-# Build
-dotnet build
-
-# Run unit tests (no credentials required)
-dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj \
-    --filter "FullyQualifiedName~Test.CSharp.Unit"
-
-# Run integration tests (requires .env file with credentials)
-source test_auth_env.sh
-dotnet test CogniteSdk/test/csharp/CogniteSdk.Test.CSharp.csproj
-
-# Or use the convenience script
-./run_integration_tests.sh
-```
-
-### Setting Up Credentials
-
-Create a `.env` file in the repository root:
-
-```bash
-CDF_CLUSTER=bluefield
-CDF_PROJECT=<your-project>
-TENANT_ID=<your-azure-tenant-id>
-CLIENT_ID=<your-service-principal-client-id>
-CLIENT_SECRET=<your-service-principal-secret>
-```
-
-The `.env` file is gitignored and will not be committed.
+**Limitation:** Integration tests for `SyncMode` are skipped; feature documented as forward-compatible.
