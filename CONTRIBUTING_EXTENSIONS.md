@@ -52,7 +52,7 @@ Open a GitHub Discussion on the official repo:
 
 **Goal**: Submit code in small, reviewable chunks.
 
-See [docs/PULL_REQUESTS.md](docs/PULL_REQUESTS.md) for the 9 PR breakdown.
+See [docs/extensions/PULL_REQUESTS.md](docs/extensions/PULL_REQUESTS.md) for the 9 PR breakdown.
 
 ---
 
@@ -82,18 +82,19 @@ If you have access to this repository:
 ## Repository Structure
 
 ```
-├── src/
-│   ├── CogniteSdk.Extensions/           # Resource implementations
-│   └── CogniteSdk.Types.Extensions/     # Type definitions
-├── tests/
+├── CogniteSdk.Extensions/               # Resource implementations
+├── CogniteSdk.Types.Extensions/         # Type definitions
+├── Test/
 │   └── CogniteSdk.Extensions.Tests/     # 127 unit tests
 ├── Examples/
 │   └── DataModeling/                    # Usage examples
 ├── docs/
-│   ├── PULL_REQUESTS.md                 # All 9 PRs described
-│   └── CURSOR_SUBMISSION_GUIDE.md       # AI agent instructions
-├── CONTRIBUTING.md                      # This file
-└── README.md                            # Security disclaimers
+│   └── extensions/
+│       ├── PULL_REQUESTS.md             # All 9 PRs described
+│       ├── CURSOR_SUBMISSION_GUIDE.md   # AI agent instructions
+│       └── FEATURE_PARITY_ANALYSIS.md   # Python SDK comparison
+├── CONTRIBUTING_EXTENSIONS.md           # This file
+└── cognite-sdk-dotnet.sln               # Solution file (includes extensions)
 ```
 
 ---
@@ -101,8 +102,9 @@ If you have access to this repository:
 ## Running Tests
 
 ```bash
-cd dotnet-sdk-extensions
-dotnet test tests/CogniteSdk.Extensions.Tests/CogniteSdk.Extensions.Tests.csproj
+cd cognite-sdk-dotnet
+git checkout feature/data-modeling-extensions
+dotnet test Test/CogniteSdk.Extensions.Tests/CogniteSdk.Extensions.Tests.csproj
 # Expected: 127 tests pass
 ```
 

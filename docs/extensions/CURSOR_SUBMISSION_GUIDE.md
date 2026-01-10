@@ -36,13 +36,13 @@ git push origin main
 
 ## Step 2: File Mapping
 
-Copy files from this repository to the official SDK structure:
+The files in this fork are already in the correct locations. When creating PRs to the official SDK, map as follows:
 
-| Source (this repo) | Destination (official SDK) |
+| Source (this fork) | Destination (official SDK) |
 |--------------------|---------------------------|
-| `src/CogniteSdk.Types.Extensions/DataModels/` | `CogniteSdk/Types/DataModels/` |
-| `src/CogniteSdk.Extensions/Resources/` | `CogniteSdk/Resources/DataModeling/` |
-| `tests/CogniteSdk.Extensions.Tests/` | `CogniteSdk.Tests/` |
+| `CogniteSdk.Types.Extensions/DataModels/` | `CogniteSdk/Types/DataModels/` |
+| `CogniteSdk.Extensions/Resources/` | `CogniteSdk/Resources/DataModeling/` |
+| `Test/CogniteSdk.Extensions.Tests/` | `CogniteSdk.Tests/` |
 
 ---
 
@@ -56,11 +56,11 @@ git checkout main
 git pull upstream main
 git checkout -b feature/filterbuilder
 
-# Copy files
-cp <extensions-repo>/src/CogniteSdk.Types.Extensions/DataModels/Query/FilterBuilder.cs \
+# Copy files from this fork to official SDK structure
+cp CogniteSdk.Types.Extensions/DataModels/Query/FilterBuilder.cs \
    CogniteSdk/Types/DataModels/Query/
 
-cp <extensions-repo>/tests/CogniteSdk.Extensions.Tests/FilterBuilderTests.cs \
+cp Test/CogniteSdk.Extensions.Tests/FilterBuilderTests.cs \
    CogniteSdk.Tests/
 
 # Verify tests pass

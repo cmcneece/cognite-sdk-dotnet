@@ -509,7 +509,7 @@ The following Python SDK features were **intentionally not included** in this PR
 | QueryBuilder  | Integration tests | 35 unit tests       |
 | Search        | Integration tests | 8 unit tests        |
 | Aggregate     | Integration tests | 16 unit tests       |
-| **Total**     | —                 | **121 tests**       |
+| **Total**     | —                 | **127 tests**       |
 
 ---
 
@@ -526,7 +526,7 @@ The .NET SDK extensions successfully achieve **full feature parity** with the Py
 7. **Improved ergonomics** with fluent APIs and strong typing
 8. **Better async support** with `IAsyncEnumerable` streaming
 9. **GraphQL wrapper** that exceeds Python SDK capabilities
-10. **Production-ready code** with 121 unit tests and proper validation
+10. **Production-ready code** with 127 unit tests and proper validation
 
 The extensions enable .NET developers to build the same Data Modeling applications that were previously only practical in Python, with no feature compromises.
 

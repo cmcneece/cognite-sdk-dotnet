@@ -49,8 +49,8 @@ PR9: Examples ──────────► (depends on all above)
 
 **Files**:
 ```
-src/CogniteSdk.Types.Extensions/DataModels/Query/FilterBuilder.cs (~420 lines)
-tests/CogniteSdk.Extensions.Tests/FilterBuilderTests.cs (~450 lines)
+CogniteSdk.Types.Extensions/DataModels/Query/FilterBuilder.cs (~420 lines)
+Test/CogniteSdk.Extensions.Tests/FilterBuilderTests.cs (~450 lines)
 ```
 
 **Tests**: 32
@@ -80,10 +80,10 @@ var filter = FilterBuilder.Create()
 
 **Files**:
 ```
-src/CogniteSdk.Types.Extensions/DataModels/GraphQL/GraphQLRequest.cs (~32 lines)
-src/CogniteSdk.Types.Extensions/DataModels/GraphQL/GraphQLResponse.cs (~116 lines)
-src/CogniteSdk.Extensions/Resources/GraphQL.cs (~138 lines)
-tests/CogniteSdk.Extensions.Tests/GraphQLTypesTests.cs (~169 lines)
+CogniteSdk.Types.Extensions/DataModels/GraphQL/GraphQLRequest.cs (~32 lines)
+CogniteSdk.Types.Extensions/DataModels/GraphQL/GraphQLResponse.cs (~116 lines)
+CogniteSdk.Extensions/Resources/GraphQL.cs (~138 lines)
+Test/CogniteSdk.Extensions.Tests/GraphQLTypesTests.cs (~169 lines)
 ```
 
 **Tests**: 16
@@ -112,10 +112,10 @@ var result = await graphQL.QueryRawAsync(
 
 **Files**:
 ```
-src/CogniteSdk.Types.Extensions/DataModels/Sync/SyncRequest.cs (~75 lines, basic)
-src/CogniteSdk.Types.Extensions/DataModels/Sync/SyncResponse.cs (~85 lines)
-src/CogniteSdk.Extensions/Resources/Sync.cs (~215 lines)
-tests/CogniteSdk.Extensions.Tests/SyncTypesTests.cs (~160 lines, basic)
+CogniteSdk.Types.Extensions/DataModels/Sync/SyncRequest.cs (~75 lines, basic)
+CogniteSdk.Types.Extensions/DataModels/Sync/SyncResponse.cs (~85 lines)
+CogniteSdk.Extensions/Resources/Sync.cs (~215 lines)
+Test/CogniteSdk.Extensions.Tests/SyncTypesTests.cs (~160 lines, basic)
 ```
 
 **Tests**: 12
@@ -144,10 +144,10 @@ await foreach (var batch in sync.StreamChangesAsync(view, pollIntervalMs: 5000, 
 
 **Files**:
 ```
-src/CogniteSdk.Types.Extensions/DataModels/Query/QueryRequest.cs (~130 lines, basic)
-src/CogniteSdk.Types.Extensions/DataModels/Query/QueryResponse.cs (~50 lines)
-src/CogniteSdk.Extensions/Resources/QueryBuilder.cs (~285 lines)
-tests/CogniteSdk.Extensions.Tests/QueryBuilderTests.cs (~290 lines, basic)
+CogniteSdk.Types.Extensions/DataModels/Query/QueryRequest.cs (~130 lines, basic)
+CogniteSdk.Types.Extensions/DataModels/Query/QueryResponse.cs (~50 lines)
+CogniteSdk.Extensions/Resources/QueryBuilder.cs (~285 lines)
+Test/CogniteSdk.Extensions.Tests/QueryBuilderTests.cs (~290 lines, basic)
 ```
 
 **Tests**: 22
@@ -177,9 +177,9 @@ var result = await query
 
 **Files** (additions to PR4 files):
 ```
-src/CogniteSdk.Types.Extensions/DataModels/Query/QueryRequest.cs (+20 lines)
-src/CogniteSdk.Extensions/Resources/QueryBuilder.cs (+50 lines)
-tests/CogniteSdk.Extensions.Tests/QueryBuilderTests.cs (+150 lines)
+CogniteSdk.Types.Extensions/DataModels/Query/QueryRequest.cs (+20 lines)
+CogniteSdk.Extensions/Resources/QueryBuilder.cs (+50 lines)
+Test/CogniteSdk.Extensions.Tests/QueryBuilderTests.cs (+150 lines)
 ```
 
 **Tests**: 13 additional
@@ -216,9 +216,9 @@ var result = await query
 
 **Files** (additions to PR3 files):
 ```
-src/CogniteSdk.Types.Extensions/DataModels/Sync/SyncRequest.cs (+60 lines)
-src/CogniteSdk.Extensions/Resources/Sync.cs (+30 lines)
-tests/CogniteSdk.Extensions.Tests/SyncTypesTests.cs (+80 lines)
+CogniteSdk.Types.Extensions/DataModels/Sync/SyncRequest.cs (+60 lines)
+CogniteSdk.Extensions/Resources/Sync.cs (+30 lines)
+Test/CogniteSdk.Extensions.Tests/SyncTypesTests.cs (+80 lines)
 ```
 
 **Tests**: 6 additional
@@ -250,10 +250,10 @@ var result = await sync.SyncAsync(view, mode: SyncMode.NoBackfill);
 
 **Files**:
 ```
-src/CogniteSdk.Types.Extensions/DataModels/Search/SearchRequest.cs (~157 lines)
-src/CogniteSdk.Types.Extensions/DataModels/Search/SearchResponse.cs (~75 lines)
-src/CogniteSdk.Extensions/Resources/Search.cs (~203 lines)
-tests/CogniteSdk.Extensions.Tests/SearchTypesTests.cs (~240 lines)
+CogniteSdk.Types.Extensions/DataModels/Search/SearchRequest.cs (~157 lines)
+CogniteSdk.Types.Extensions/DataModels/Search/SearchResponse.cs (~75 lines)
+CogniteSdk.Extensions/Resources/Search.cs (~203 lines)
+Test/CogniteSdk.Extensions.Tests/SearchTypesTests.cs (~240 lines)
 ```
 
 **Tests**: 16
@@ -284,10 +284,10 @@ var results = await search.SearchAsync(new SearchInstancesRequest
 
 **Files**:
 ```
-src/CogniteSdk.Types.Extensions/DataModels/Aggregate/AggregateRequest.cs (~121 lines)
-src/CogniteSdk.Types.Extensions/DataModels/Aggregate/AggregateResponse.cs (~85 lines)
-src/CogniteSdk.Extensions/Resources/Aggregate.cs (~340 lines)
-tests/CogniteSdk.Extensions.Tests/AggregateTypesTests.cs (~300 lines)
+CogniteSdk.Types.Extensions/DataModels/Aggregate/AggregateRequest.cs (~121 lines)
+CogniteSdk.Types.Extensions/DataModels/Aggregate/AggregateResponse.cs (~85 lines)
+CogniteSdk.Extensions/Resources/Aggregate.cs (~340 lines)
+Test/CogniteSdk.Extensions.Tests/AggregateTypesTests.cs (~300 lines)
 ```
 
 **Tests**: 10
@@ -321,7 +321,7 @@ var avgTemp = await aggregate.AvgAsync(view, "temperature");
 
 **Files**:
 ```
-src/CogniteSdk.Extensions/ClientExtensions.cs (~116 lines)
+CogniteSdk.Extensions/ClientExtensions.cs (~116 lines)
 Examples/DataModeling/Program.cs (~400 lines)
 Examples/DataModeling/DataModelingExamples.csproj (~20 lines)
 ```
