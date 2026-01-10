@@ -101,12 +101,57 @@ If you have access to this repository:
 
 ## Running Tests
 
+### Unit Tests (No CDF Access Required)
+
+The extensions include 127 unit tests that mock HTTP calls - no CDF credentials needed:
+
 ```bash
 cd cognite-sdk-dotnet
 git checkout feature/data-modeling-extensions
 dotnet test Test/CogniteSdk.Extensions.Tests/CogniteSdk.Extensions.Tests.csproj
 # Expected: 127 tests pass
 ```
+
+### Integration Tests (Requires CDF Access)
+
+The `Examples/DataModeling/` project serves as integration tests that call actual CDF endpoints.
+
+**Prerequisites:**
+- A CDF project with Data Modeling enabled
+- A data model with at least one view
+- Service principal credentials with `datamodels:read` scope
+
+**Setup:**
+
+1. Set environment variables:
+```bash
+export CDF_PROJECT="your-project"
+export CDF_CLUSTER="westeurope-1"  # or your cluster
+export TENANT_ID="your-azure-tenant-id"
+export CLIENT_ID="your-app-client-id"
+export CLIENT_SECRET="your-client-secret"
+```
+
+2. Update the constants in `Examples/DataModeling/Program.cs` to match your data model:
+```csharp
+private const string Space = "your_space";
+private const string DataModelId = "YourDataModel";
+private const string DataModelVersion = "1";
+private const string ViewExternalId = "YourView";
+```
+
+3. Run the examples:
+```bash
+cd Examples/DataModeling
+dotnet run
+```
+
+**What the integration tests cover:**
+- GraphQL queries against Data Models
+- QueryBuilder with filters and edge traversal
+- Sync API streaming
+- Search API with full-text queries
+- Aggregate API with groupBy and histograms
 
 ---
 
