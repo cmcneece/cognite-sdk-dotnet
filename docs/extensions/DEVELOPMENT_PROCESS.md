@@ -77,11 +77,11 @@ This code was developed with AI assistance (Claude via Cursor IDE).
 
 Integration tests were executed against a CDF project on bluefield cluster:
 
-| Test Suite          | Tests | Result |
-| ------------------- | ----- | ------ |
-| DataModels          | 10    | Passed |
-| FilterBuilder (Unit)| 26    | Passed |
-| SyncQuery (Unit)    | 8     | Passed |
+| Test Suite           | Tests | Result |
+| -------------------- | ----- | ------ |
+| DataModels           | 10    | Passed |
+| FilterBuilder (Unit) | 26    | Passed |
+| SyncQuery (Unit)     | 8     | Passed |
 
 ## Known Limitations
 
@@ -94,7 +94,11 @@ Integration tests were executed against a CDF project on bluefield cluster:
 ### Code Quality Notes
 
 1. `GraphQLResource` uses `HttpClient` directly instead of Oryx pipeline
-2. FilterBuilder uses anonymous objects internally but returns typed `IDMSFilter`
+   - Official SDK resources inherit from `Resource` and use `Oryx.Cognite.*` methods
+   - GraphQL was implemented standalone to avoid modifying the F# Oryx layer
+   - To align fully, GraphQL would need corresponding F# functions in `Oryx.Cognite`
+2. `GraphQLResource` requires manual instantiation (not accessible via `client.Resource`)
+3. FilterBuilder uses official SDK types (`IDMSFilter`, `RawPropertyValue<T>`)
 
 ## File Inventory
 

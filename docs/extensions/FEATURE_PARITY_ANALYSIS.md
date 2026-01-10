@@ -123,10 +123,22 @@ var schema = await graphql.IntrospectAsync(space, modelId, version);
 
 The extensions follow official SDK patterns:
 
-| Pattern                                           | Status                |
-| ------------------------------------------------- | --------------------- |
-| Namespace: `CogniteSdk.DataModels`                | ✅ Used                |
-| Return types: `IDMSFilter`, `RawPropertyValue<T>` | ✅ Used                |
-| C# version: 7.3 compatible                        | ✅ Compatible          |
-| .NET Standard 2.0                                 | ✅ Compatible          |
-| Paket dependencies                                | ✅ No new dependencies |
+| Pattern                                           | Status                            |
+| ------------------------------------------------- | --------------------------------- |
+| Namespace: `CogniteSdk.DataModels`                | ✅ Used                            |
+| Return types: `IDMSFilter`, `RawPropertyValue<T>` | ✅ Used                            |
+| C# version: 7.3 compatible                        | ✅ Compatible                      |
+| .NET Standard 2.0                                 | ✅ Compatible                      |
+| Paket dependencies                                | ✅ No new dependencies             |
+| XML documentation                                 | ✅ All public APIs documented      |
+| Input validation                                  | ✅ ArgumentNullException/Exception |
+| Copyright headers                                 | ✅ Apache-2.0 SPDX                 |
+
+### Architectural Deviations
+
+| Component           | SDK Pattern                       | Our Implementation             |
+| ------------------- | --------------------------------- | ------------------------------ |
+| `GraphQLResource`   | Inherits `Resource`, uses Oryx    | Standalone, uses `HttpClient`  |
+| GraphQL access      | `client.GraphQL`                  | Manual instantiation required  |
+
+**Rationale**: Integrating GraphQL into the Oryx pipeline would require modifying the F# layer (`Oryx.Cognite`). The standalone implementation was chosen to minimize scope while maintaining functionality.
