@@ -132,11 +132,13 @@ var schema = await graphql.IntrospectAsync(space, modelId, version);
 
 ### Integration Tests (require CDF credentials)
 
-| Test File                                 | Tests | Description                  |
-| ----------------------------------------- | ----- | ---------------------------- |
-| `DataModelsExtensionsIntegrationTests.cs` | 11    | FilterBuilder, Sync, GraphQL |
+| Test File                            | Tests | Description                |
+| ------------------------------------ | ----- | -------------------------- |
+| `FilterBuilderIntegrationTests.cs`   | 7     | FilterBuilder filters      |
+| `SyncGraphQLIntegrationTests.cs`     | 5     | SyncQuery + GraphQL        |
+| **Total Integration**                | 12    |                            |
 
-Run with: `source test_auth_env.sh && dotnet test --filter "DataModelsExtensionsTest"`
+Run with: `source test_auth_env.sh && dotnet test --filter "IntegrationTests"`
 
 ## Alignment with SDK Patterns
 

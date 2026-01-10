@@ -113,16 +113,20 @@ dotnet build CogniteSdk/src/CogniteSdk.csproj
 
 ## PR Strategy
 
-The extensions are designed to be submitted as **4 independent, human-reviewable PRs**. Each PR is self-contained, includes its own tests, and can be merged independently.
+The extensions are designed to be submitted as **6 independent, human-reviewable PRs**, each under 500 lines for manageable review.
 
 ### PR Overview
 
 | PR | Title | Files | Lines | Tests |
 |----|-------|-------|-------|-------|
-| 1 | FilterBuilder Fluent API | 2 | ~760 | 26 unit |
-| 2 | SyncQuery Extensions | 2 | ~180 | 8 unit |
-| 3 | GraphQL Resource | 2 | ~350 | - |
-| 4 | Integration Tests | 1 | ~825 | 11 integration |
+| 1 | FilterBuilder Fluent API | 1 | 471 | - |
+| 2 | FilterBuilder Unit Tests | 1 | 291 | 26 unit |
+| 3 | SyncQuery Extensions | 2 | ~185 | 8 unit |
+| 4 | GraphQL Resource | 2 | 346 | - |
+| 5 | FilterBuilder Integration Tests | 1 | 519 | 7 integration |
+| 6 | Sync + GraphQL Integration Tests | 1 | 328 | 5 integration |
+
+---
 
 ### PR 1: FilterBuilder Fluent API
 
@@ -130,22 +134,38 @@ The extensions are designed to be submitted as **4 independent, human-reviewable
 
 **Files**:
 - `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` (471 lines)
-- `CogniteSdk/test/csharp/FilterBuilderTests.cs` (291 lines)
 
 **Dependencies**: None. Uses existing `IDMSFilter` types.
 
 **Review Focus**:
 - Fluent API design patterns
+- Method chaining and immutability
 - Null handling and validation
 - JSON serialization compatibility with existing filter types
 
-**Tests**: 26 unit tests covering all filter operations (Equals, In, Range, Prefix, Exists, ContainsAny, ContainsAll, HasData, And, Or, Not, Nested, Parameter).
+---
+
+### PR 2: FilterBuilder Unit Tests
+
+**Purpose**: Unit tests for FilterBuilder.
+
+**Files**:
+- `CogniteSdk/test/csharp/FilterBuilderTests.cs` (291 lines)
+
+**Dependencies**: PR 1
+
+**Review Focus**:
+- Test coverage for all filter operations
+- Edge case handling
+- JSON serialization verification
+
+**Tests**: 26 unit tests covering: Equals, In, Range, Prefix, Exists, ContainsAny, ContainsAll, HasData, And, Or, Not, Nested, Parameter.
 
 ---
 
-### PR 2: SyncQuery Extensions
+### PR 3: SyncQuery Extensions
 
-**Purpose**: Extend `SyncQuery` with sync modes and backfill sorting for the Sync API.
+**Purpose**: Extend `SyncQuery` with sync modes and backfill sorting.
 
 **Files**:
 - `CogniteSdk.Types/DataModels/Query/Query.cs` (~50 lines added)
@@ -154,7 +174,7 @@ The extensions are designed to be submitted as **4 independent, human-reviewable
 **Dependencies**: None. Extends existing `SyncQuery` class.
 
 **Review Focus**:
-- `SyncMode` enum JSON serialization (camelCase)
+- `SyncMode` enum JSON serialization (camelCase via `JsonPropertyName`)
 - `SyncBackfillSort` property structure
 - Backward compatibility with existing `SyncQuery` usage
 
@@ -164,9 +184,9 @@ The extensions are designed to be submitted as **4 independent, human-reviewable
 
 ---
 
-### PR 3: GraphQL Resource
+### PR 4: GraphQL Resource
 
-**Purpose**: Add a dedicated resource for executing GraphQL queries against Data Models.
+**Purpose**: Add a resource for executing GraphQL queries against Data Models.
 
 **Files**:
 - `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` (144 lines)
@@ -177,90 +197,106 @@ The extensions are designed to be submitted as **4 independent, human-reviewable
 **Review Focus**:
 - GraphQL request/response type design
 - Error handling and `GraphQLError` structure
-- `HttpClient` usage (standalone, not using Oryx pipeline)
+- `HttpClient` usage pattern
 
-**Architectural Note**: `GraphQLResource` uses a standalone `HttpClient` rather than the SDK's Oryx HTTP pipeline. This is because:
-1. GraphQL queries use a different URL structure (`/api/v1/projects/{project}/models/spaces/{space}/datamodels/{model}/versions/{version}/graphql`)
+**Architectural Note**: `GraphQLResource` uses a standalone `HttpClient` rather than the SDK's Oryx HTTP pipeline because:
+1. GraphQL uses a different URL structure
 2. Request/response formats differ from REST endpoints
 3. The resource is instantiated directly rather than through the main `Client`
 
 ---
 
-### PR 4: Integration Tests
+### PR 5: FilterBuilder Integration Tests
 
-**Purpose**: Add integration tests validating all extensions against live CDF.
+**Purpose**: Integration tests for FilterBuilder against live CDF.
 
 **Files**:
-- `CogniteSdk/test/csharp/DataModelsExtensionsIntegrationTests.cs` (825 lines)
+- `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` (519 lines)
 
-**Dependencies**: PRs 1-3 (or can be submitted as a single combined PR).
+**Dependencies**: PR 1, PR 2
 
 **Review Focus**:
-- Test data setup and cleanup
-- CDF API interaction patterns
-- Known API limitations documented in test comments
+- Test data setup and cleanup patterns
+- CDF API interaction
+- Known limitations documented in comments
 
-**Tests**: 
-- 7 FilterBuilder integration tests
-- 2 SyncQuery integration tests  
-- 3 GraphQL integration tests (introspection, typed query, error handling)
+**Tests**: 7 integration tests (Equals, And, Range, Prefix, Or, Not filters).
+
+---
+
+### PR 6: Sync + GraphQL Integration Tests
+
+**Purpose**: Integration tests for SyncQuery and GraphQL.
+
+**Files**:
+- `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` (328 lines)
+
+**Dependencies**: PR 3, PR 4
+
+**Review Focus**:
+- SyncQuery integration patterns
+- GraphQL introspection and query handling
+- Error response handling
+
+**Tests**: 2 SyncQuery tests + 3 GraphQL tests (introspection, typed query, error handling).
 
 ---
 
 ### Submission Order
 
-PRs can be submitted in parallel or sequentially:
+**Recommended: Sequential with dependencies**
 
-**Option A: Sequential** (Recommended for smaller review burden)
-1. PR 1 (FilterBuilder) → Merge
-2. PR 2 (SyncQuery) → Merge
-3. PR 3 (GraphQL) → Merge
-4. PR 4 (Integration Tests) → Merge
+```
+PR 1 (FilterBuilder code)
+    ↓
+PR 2 (FilterBuilder unit tests)  +  PR 3 (SyncQuery)  +  PR 4 (GraphQL)
+    ↓                                    ↓                    ↓
+PR 5 (FilterBuilder integration)    PR 6 (Sync + GraphQL integration)
+```
 
-**Option B: Parallel with PR 4 last**
-- Submit PRs 1, 2, 3 in parallel
-- Submit PR 4 after PRs 1-3 are merged
+**Timeline**:
+1. Submit PR 1 first (no dependencies)
+2. After PR 1 merges: Submit PRs 2, 3, 4 in parallel
+3. After PRs 2+3+4 merge: Submit PRs 5, 6
 
-**Option C: Single combined PR**
-- All changes in one PR (~2200 lines)
-- Only recommended if reviewers prefer comprehensive review
+---
 
 ### Creating PRs from This Fork
 
-Each PR should be created from this fork's `feature/data-modeling-extensions` branch targeting the official `cognitedata/cognite-sdk-dotnet` repository's `master` branch.
+Each PR should be created from this fork targeting `cognitedata/cognite-sdk-dotnet:master`.
 
-To extract files for individual PRs:
 ```bash
-# Example: Create branch for PR 1 (FilterBuilder)
+# Example: Create branch for PR 1 (FilterBuilder code only)
 git checkout master
-git checkout -b pr/filterbuilder
+git checkout -b pr/filterbuilder-code
 git checkout feature/data-modeling-extensions -- CogniteSdk.Types/DataModels/Query/FilterBuilder.cs
-git checkout feature/data-modeling-extensions -- CogniteSdk/test/csharp/FilterBuilderTests.cs
 git commit -m "feat(datamodels): add FilterBuilder fluent API for DMS filters"
+git push origin pr/filterbuilder-code
+# Then create PR via GitHub UI
 ```
+
+---
 
 ### PR Template
 
-Each PR should include:
-
 ```markdown
 ## Summary
-[Brief description of the feature]
+[Brief description]
 
 ## Changes
-- [List of files changed]
+- [File list]
 
 ## Testing
-- [X] Unit tests added (X tests)
-- [ ] Integration tests (separate PR / included)
+- [ ] Unit tests (X tests) - included / separate PR
+- [ ] Integration tests - included / separate PR
 
 ## AI Assistance Disclosure
 This code was developed with AI assistance (Claude via Cursor). 
 Human review and validation is recommended.
 
-## Documentation
-- See CONTRIBUTING_EXTENSIONS.md for usage examples
-- See docs/extensions/DEVELOPMENT_PROCESS.md for development details
+## Related PRs
+- Depends on: #XX (if applicable)
+- Related: #YY (if applicable)
 ```
 
 ## AI Assistance Disclosure
@@ -269,12 +305,13 @@ This code was developed with AI assistance (Claude via Cursor). Human review and
 
 ## File Summary
 
-| File | Description |
-|------|-------------|
-| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | Fluent filter builder |
-| `CogniteSdk.Types/DataModels/Query/Query.cs` | Extended with SyncMode, SyncBackfillSort |
-| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | GraphQL request/response types |
-| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | GraphQL query execution |
-| `CogniteSdk/test/csharp/FilterBuilderTests.cs` | FilterBuilder unit tests (26 tests) |
-| `CogniteSdk/test/csharp/SyncQueryTests.cs` | SyncQuery extension unit tests (8 tests) |
-| `CogniteSdk/test/csharp/DataModelsExtensionsIntegrationTests.cs` | Integration tests (11 tests) |
+| File | Lines | Description |
+|------|-------|-------------|
+| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | 471 | Fluent filter builder |
+| `CogniteSdk.Types/DataModels/Query/Query.cs` | +50 | Extended with SyncMode, SyncBackfillSort |
+| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | 144 | GraphQL request/response types |
+| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | 202 | GraphQL query execution |
+| `CogniteSdk/test/csharp/FilterBuilderTests.cs` | 291 | FilterBuilder unit tests (26 tests) |
+| `CogniteSdk/test/csharp/SyncQueryTests.cs` | 134 | SyncQuery extension unit tests (8 tests) |
+| `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` | 519 | FilterBuilder integration tests (7 tests) |
+| `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` | 328 | SyncQuery + GraphQL integration tests (5 tests) |
