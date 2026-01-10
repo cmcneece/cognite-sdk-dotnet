@@ -288,10 +288,10 @@ When maintainers request changes:
 ## Merge Order Summary
 
 ```
-Week 1: PR1, PR2, PR3 (parallel, no dependencies)
-Week 2: PR4 (after PR1), PR7, PR8 (after PR1)
-Week 3: PR5 (after PR4), PR6 (after PR3)
-Week 4: PR9 (after all)
+Batch 1: PR1, PR2, PR3 (parallel, no dependencies)
+Batch 2: PR4 (after PR1), PR7, PR8 (after PR1)
+Batch 3: PR5 (after PR4), PR6 (after PR3)
+Batch 4: PR9 (after all above)
 ```
 
 ---

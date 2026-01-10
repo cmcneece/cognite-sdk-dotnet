@@ -12,15 +12,15 @@ This document describes the development process used to create the Data Modeling
 
 ---
 
-## Development Timeline
+## Development Phases
 
-| Phase | Duration | Focus |
-|-------|----------|-------|
-| **Research** | 1 week | Python SDK analysis, CDF API documentation review |
-| **Initial Implementation** | 2 weeks | Core APIs (FilterBuilder, GraphQL, Sync, QueryBuilder) |
-| **Feature Parity** | 1 week | Search, Aggregate, Query Parameters, Sync Modes |
-| **Review Cycles** | 1 week | 3 rounds of simulated code review |
-| **Documentation** | 3 days | PR preparation, examples, guides |
+| Phase | Focus |
+|-------|-------|
+| **Research** | Python SDK analysis, CDF API documentation review |
+| **Initial Implementation** | Core APIs (FilterBuilder, GraphQL, Sync, QueryBuilder) |
+| **Feature Parity** | Search, Aggregate, Query Parameters, Sync Modes |
+| **Review Cycles** | 3 rounds of simulated code review |
+| **Documentation** | PR preparation, examples, guides |
 
 ---
 
