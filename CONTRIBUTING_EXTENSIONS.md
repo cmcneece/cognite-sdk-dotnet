@@ -12,6 +12,10 @@ The Cognite Python SDK includes several Data Modeling conveniences that are not 
 
 This fork adds these capabilities to the .NET SDK while maintaining compatibility with the existing codebase.
 
+## AI Assistance Disclosure
+
+This code was developed with AI assistance (Claude via Cursor). See `docs/extensions/DEVELOPMENT_PROCESS.md` for the full development history and QA process.
+
 ## Features
 
 ### 1. FilterBuilder - Fluent Filter API
@@ -210,7 +214,3 @@ PRs 1, 3, and 4 have no dependencies and can be submitted in parallel after PR 1
 - **IAsyncEnumerable**: Not implemented (requires C# 8.0+, SDK targets .NET Standard 2.0)
 - **GraphQL Resource**: Standalone implementation, not integrated into Oryx pipeline
 - **SyncMode**: Forward-compatible types, API support varies by CDF version
-
-## AI Assistance Disclosure
-
-This code was developed with AI assistance (Claude via Cursor). See `docs/extensions/DEVELOPMENT_PROCESS.md` for details.
