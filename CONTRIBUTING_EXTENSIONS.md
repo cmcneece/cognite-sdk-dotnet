@@ -22,12 +22,12 @@ These extensions underwent a security review. See [`docs/extensions/SECURITY_REV
 
 ### Key Security Features
 
-| Feature | Implementation |
-|---------|----------------|
-| **Input Validation** | All public methods validate inputs (null checks, bounds, path traversal prevention) |
-| **GraphQL Protection** | Identifier validation blocks `..`, `/`, `\`, `%` characters; query length limited to 100KB |
-| **Thread Safety** | `FilterBuilder` is explicitly NOT thread-safe (documented); create new instances per operation |
-| **Credential Handling** | `.env` files gitignored; test scripts include cleanup guidance |
+| Feature                 | Implementation                                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| **Input Validation**    | All public methods validate inputs (null checks, bounds, path traversal prevention)            |
+| **GraphQL Protection**  | Identifier validation blocks `..`, `/`, `\`, `%` characters; query length limited to 100KB     |
+| **Thread Safety**       | `FilterBuilder` is explicitly NOT thread-safe (documented); create new instances per operation |
+| **Credential Handling** | `.env` files gitignored; test scripts include cleanup guidance                                 |
 
 ### Security Considerations for Users
 
@@ -82,21 +82,21 @@ var query = new Query
 
 **Supported Methods:**
 
-| Method | Filter Type | Example |
-|--------|-------------|---------|
-| `HasData()` | HasDataFilter | `.HasData(view1, view2)` |
-| `Equals()` | EqualsFilter | `.Equals(view, "prop", value)` |
-| `In()` | InFilter | `.In(view, "prop", "a", "b", "c")` |
-| `Range()` | RangeFilter | `.Range(view, "prop", gte: 0, lt: 100)` |
-| `Prefix()` | PrefixFilter | `.Prefix(view, "name", "test_")` |
-| `Exists()` | ExistsFilter | `.Exists(view, "optionalProp")` |
-| `ContainsAny()` | ContainsAnyFilter | `.ContainsAny(view, "tags", "a", "b")` |
-| `ContainsAll()` | ContainsAllFilter | `.ContainsAll(view, "tags", "x", "y")` |
-| `And()` | AndFilter | `.And(filter1, filter2)` |
-| `Or()` | OrFilter | `.Or(filter1, filter2)` |
-| `Not()` | NotFilter | `.Not(filterToNegate)` |
-| `Nested()` | NestedFilter | `.Nested(scope, innerFilter)` |
-| `MatchAll()` | MatchAllFilter | `.MatchAll()` |
+| Method          | Filter Type       | Example                                 |
+| --------------- | ----------------- | --------------------------------------- |
+| `HasData()`     | HasDataFilter     | `.HasData(view1, view2)`                |
+| `Equals()`      | EqualsFilter      | `.Equals(view, "prop", value)`          |
+| `In()`          | InFilter          | `.In(view, "prop", "a", "b", "c")`      |
+| `Range()`       | RangeFilter       | `.Range(view, "prop", gte: 0, lt: 100)` |
+| `Prefix()`      | PrefixFilter      | `.Prefix(view, "name", "test_")`        |
+| `Exists()`      | ExistsFilter      | `.Exists(view, "optionalProp")`         |
+| `ContainsAny()` | ContainsAnyFilter | `.ContainsAny(view, "tags", "a", "b")`  |
+| `ContainsAll()` | ContainsAllFilter | `.ContainsAll(view, "tags", "x", "y")`  |
+| `And()`         | AndFilter         | `.And(filter1, filter2)`                |
+| `Or()`          | OrFilter          | `.Or(filter1, filter2)`                 |
+| `Not()`         | NotFilter         | `.Not(filterToNegate)`                  |
+| `Nested()`      | NestedFilter      | `.Nested(scope, innerFilter)`           |
+| `MatchAll()`    | MatchAllFilter    | `.MatchAll()`                           |
 
 ### 2. SyncQuery Extensions
 
@@ -134,11 +134,11 @@ var result = await client.DataModels.SyncInstances<MyType>(syncQuery);
 
 **Sync Modes:**
 
-| Mode | Description |
-|------|-------------|
-| `onePhase` | Default single-pass sync |
-| `twoPhase` | Two-stage sync optimized for indexed filters |
-| `noBackfill` | Skip backfill, only return new changes |
+| Mode         | Description                                  |
+| ------------ | -------------------------------------------- |
+| `onePhase`   | Default single-pass sync                     |
+| `twoPhase`   | Two-stage sync optimized for indexed filters |
+| `noBackfill` | Skip backfill, only return new changes       |
 
 > **Note:** The `mode` field is not yet supported by all CDF API versions. Types are included for forward compatibility.
 
@@ -209,14 +209,14 @@ These extensions are designed to be submitted as **6 independent PRs** to the of
 
 ### Summary
 
-| PR | Feature | Files | Lines | Dependencies |
-|----|---------|-------|-------|--------------|
-| 1 | FilterBuilder | `FilterBuilder.cs` | 471 | None |
-| 2 | FilterBuilder Tests | `FilterBuilderTests.cs` | 291 | PR 1 |
-| 3 | SyncQuery Extensions | `Query.cs`, `SyncQueryTests.cs` | ~257 | None |
-| 4 | GraphQL Client | `GraphQL.cs`, `DataModels.fs`, `DataModels.cs` | ~400 | None |
-| 5 | FilterBuilder Integration Tests | `FilterBuilderIntegrationTests.cs` | 519 | PR 1, PR 2 |
-| 6 | Sync + GraphQL Integration Tests | `SyncGraphQLIntegrationTests.cs` | 328 | PR 3, PR 4 |
+| PR  | Feature                          | Files                                          | Lines | Dependencies |
+| --- | -------------------------------- | ---------------------------------------------- | ----- | ------------ |
+| 1   | FilterBuilder                    | `FilterBuilder.cs`                             | 471   | None         |
+| 2   | FilterBuilder Tests              | `FilterBuilderTests.cs`                        | 291   | PR 1         |
+| 3   | SyncQuery Extensions             | `Query.cs`, `SyncQueryTests.cs`                | ~257  | None         |
+| 4   | GraphQL Client                   | `GraphQL.cs`, `DataModels.fs`, `DataModels.cs` | ~400  | None         |
+| 5   | FilterBuilder Integration Tests  | `FilterBuilderIntegrationTests.cs`             | 519   | PR 1, PR 2   |
+| 6   | Sync + GraphQL Integration Tests | `SyncGraphQLIntegrationTests.cs`               | 328   | PR 3, PR 4   |
 
 ### Submission Order
 
@@ -234,11 +234,11 @@ PRs 1, 3, and 4 can be submitted in parallel as they have no dependencies on eac
 
 ### PR 1: FilterBuilder - Fluent Filter API
 
-| Field | Value |
-|-------|-------|
-| **Title** | `feat(datamodels): add FilterBuilder fluent API for DMS filters` |
-| **Files** | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` (471 lines) |
-| **Dependencies** | None |
+| Field            | Value                                                            |
+| ---------------- | ---------------------------------------------------------------- |
+| **Title**        | `feat(datamodels): add FilterBuilder fluent API for DMS filters` |
+| **Files**        | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` (471 lines) |
+| **Dependencies** | None                                                             |
 
 <details>
 <summary><strong>PR Description Template</strong></summary>
@@ -273,11 +273,11 @@ var filter = FilterBuilder.Create()
 
 ### PR 2: FilterBuilder Unit Tests
 
-| Field | Value |
-|-------|-------|
-| **Title** | `test(datamodels): add FilterBuilder unit tests` |
-| **Files** | `CogniteSdk/test/csharp/FilterBuilderTests.cs` (291 lines) |
-| **Dependencies** | PR 1 |
+| Field            | Value                                                      |
+| ---------------- | ---------------------------------------------------------- |
+| **Title**        | `test(datamodels): add FilterBuilder unit tests`           |
+| **Files**        | `CogniteSdk/test/csharp/FilterBuilderTests.cs` (291 lines) |
+| **Dependencies** | PR 1                                                       |
 
 <details>
 <summary><strong>PR Description Template</strong></summary>
@@ -300,11 +300,11 @@ Adds comprehensive unit tests for the FilterBuilder fluent API.
 
 ### PR 3: SyncQuery Extensions
 
-| Field | Value |
-|-------|-------|
-| **Title** | `feat(datamodels): add SyncMode and SyncBackfillSort to SyncQuery` |
-| **Files** | `CogniteSdk.Types/DataModels/Query/Query.cs` (~100 lines added), `CogniteSdk/test/csharp/SyncQueryTests.cs` (157 lines) |
-| **Dependencies** | None |
+| Field            | Value                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Title**        | `feat(datamodels): add SyncMode and SyncBackfillSort to SyncQuery`                                                      |
+| **Files**        | `CogniteSdk.Types/DataModels/Query/Query.cs` (~100 lines added), `CogniteSdk/test/csharp/SyncQueryTests.cs` (157 lines) |
+| **Dependencies** | None                                                                                                                    |
 
 <details>
 <summary><strong>PR Description Template</strong></summary>
@@ -341,11 +341,11 @@ The `mode` field is forward-compatible; API support may vary by CDF cluster vers
 
 ### PR 4: GraphQL Client
 
-| Field | Value |
-|-------|-------|
-| **Title** | `feat(datamodels): add GraphQL client for Data Model queries` |
-| **Files** | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` (143 lines), `Oryx.Cognite/src/DataModels.fs` (~40 lines), `CogniteSdk/src/Resources/DataModels.cs` (~120 lines) |
-| **Dependencies** | None |
+| Field            | Value                                                                                                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Title**        | `feat(datamodels): add GraphQL client for Data Model queries`                                                                                                     |
+| **Files**        | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` (143 lines), `Oryx.Cognite/src/DataModels.fs` (~40 lines), `CogniteSdk/src/Resources/DataModels.cs` (~120 lines) |
+| **Dependencies** | None                                                                                                                                                              |
 
 <details>
 <summary><strong>PR Description Template</strong></summary>
@@ -377,11 +377,11 @@ var schema = await client.DataModels.GraphQLIntrospect(space, modelId, version);
 
 ### PR 5: FilterBuilder Integration Tests
 
-| Field | Value |
-|-------|-------|
-| **Title** | `test(datamodels): add FilterBuilder integration tests` |
-| **Files** | `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` (519 lines) |
-| **Dependencies** | PR 1, PR 2 |
+| Field            | Value                                                                 |
+| ---------------- | --------------------------------------------------------------------- |
+| **Title**        | `test(datamodels): add FilterBuilder integration tests`               |
+| **Files**        | `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` (519 lines) |
+| **Dependencies** | PR 1, PR 2                                                            |
 
 <details>
 <summary><strong>PR Description Template</strong></summary>
@@ -406,11 +406,11 @@ Requires `.env` file with CDF credentials (see CONTRIBUTING_EXTENSIONS.md).
 
 ### PR 6: Sync + GraphQL Integration Tests
 
-| Field | Value |
-|-------|-------|
-| **Title** | `test(datamodels): add Sync and GraphQL integration tests` |
-| **Files** | `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` (328 lines) |
-| **Dependencies** | PR 3, PR 4 |
+| Field            | Value                                                               |
+| ---------------- | ------------------------------------------------------------------- |
+| **Title**        | `test(datamodels): add Sync and GraphQL integration tests`          |
+| **Files**        | `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` (328 lines) |
+| **Dependencies** | PR 3, PR 4                                                          |
 
 <details>
 <summary><strong>PR Description Template</strong></summary>
@@ -436,13 +436,13 @@ SyncMode tests are limited as the `mode` field is not yet supported on all clust
 
 ## File Reference
 
-| File | Description |
-|------|-------------|
-| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | Fluent filter builder |
-| `CogniteSdk.Types/DataModels/Query/Query.cs` | SyncMode, SyncBackfillSort additions |
-| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | GraphQL request/response types |
-| `Oryx.Cognite/src/DataModels.fs` | GraphQL F# handlers |
-| `CogniteSdk/src/Resources/DataModels.cs` | GraphQL C# methods |
+| File                                                 | Description                          |
+| ---------------------------------------------------- | ------------------------------------ |
+| `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | Fluent filter builder                |
+| `CogniteSdk.Types/DataModels/Query/Query.cs`         | SyncMode, SyncBackfillSort additions |
+| `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs`     | GraphQL request/response types       |
+| `Oryx.Cognite/src/DataModels.fs`                     | GraphQL F# handlers                  |
+| `CogniteSdk/src/Resources/DataModels.cs`             | GraphQL C# methods                   |
 
 ## Limitations
 

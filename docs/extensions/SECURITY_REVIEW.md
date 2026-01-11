@@ -13,12 +13,12 @@ The Data Modeling extensions demonstrate **good security practices** with compre
 
 ### Remediation Status
 
-| Severity | Count | Status |
-|----------|-------|--------|
-| 🔴 High | 1 | ✅ Fixed |
-| 🟠 Medium | 3 | ✅ Fixed (2) / ⚠️ Out of Scope (1) |
-| 🟡 Low | 4 | ✅ Fixed |
-| ✅ Positive | 5 | N/A |
+| Severity   | Count | Status                           |
+| ---------- | ----- | -------------------------------- |
+| 🔴 High     | 1     | ✅ Fixed                          |
+| 🟠 Medium   | 3     | ✅ Fixed (2) / ⚠️ Out of Scope (1) |
+| 🟡 Low      | 4     | ✅ Fixed                          |
+| ✅ Positive | 5     | N/A                              |
 
 ---
 
@@ -36,12 +36,12 @@ The Data Modeling extensions demonstrate **good security practices** with compre
 
 ### SEC-001: GraphQL Input Validation Missing
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🔴 High |
-| **Status** | ✅ Fixed |
-| **Component** | `CogniteSdk/src/Resources/DataModels.cs` |
-| **OWASP Category** | A03:2021 – Injection |
+| Field              | Value                                    |
+| ------------------ | ---------------------------------------- |
+| **Severity**       | 🔴 High                                   |
+| **Status**         | ✅ Fixed                                  |
+| **Component**      | `CogniteSdk/src/Resources/DataModels.cs` |
+| **OWASP Category** | A03:2021 – Injection                     |
 
 #### Original Problem
 
@@ -124,11 +124,11 @@ public async Task<GraphQLResponse<T>> GraphQLQuery<T>(...)
 
 ### SEC-002: Path Traversal Risk in GraphQL URL Construction
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🟠 Medium |
-| **Status** | ⚠️ Out of Scope |
-| **Component** | `Oryx.Cognite/src/DataModels.fs` |
+| Field              | Value                            |
+| ------------------ | -------------------------------- |
+| **Severity**       | 🟠 Medium                         |
+| **Status**         | ⚠️ Out of Scope                   |
+| **Component**      | `Oryx.Cognite/src/DataModels.fs` |
 | **OWASP Category** | A01:2021 – Broken Access Control |
 
 #### Original Problem
@@ -165,12 +165,12 @@ This fix requires modifying `Oryx.Cognite/src/DataModels.fs`, which is part of t
 
 ### SEC-003: Insufficient Security Documentation for AllowExpiredCursors
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🟠 Medium |
-| **Status** | ✅ Fixed |
+| Field         | Value                                        |
+| ------------- | -------------------------------------------- |
+| **Severity**  | 🟠 Medium                                     |
+| **Status**    | ✅ Fixed                                      |
 | **Component** | `CogniteSdk.Types/DataModels/Query/Query.cs` |
-| **Category** | Documentation / Compliance |
+| **Category**  | Documentation / Compliance                   |
 
 #### Original Problem
 
@@ -241,12 +241,12 @@ public bool? AllowExpiredCursorsAndAcceptMissedDeletes { get; set; }
 
 ### SEC-004: Sensitive Data Exposure in ToString()
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🟠 Medium |
-| **Status** | ✅ Fixed |
-| **Component** | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` |
-| **OWASP Category** | A09:2021 – Security Logging and Monitoring Failures |
+| Field              | Value                                                |
+| ------------------ | ---------------------------------------------------- |
+| **Severity**       | 🟠 Medium                                             |
+| **Status**         | ✅ Fixed                                              |
+| **Component**      | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` |
+| **OWASP Category** | A09:2021 – Security Logging and Monitoring Failures  |
 
 #### Original Problem
 
@@ -319,10 +319,10 @@ public override string ToString()
 
 ### SEC-005: Thread Safety Warning Placement
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🟡 Low |
-| **Status** | ✅ Fixed |
+| Field         | Value                                                |
+| ------------- | ---------------------------------------------------- |
+| **Severity**  | 🟡 Low                                                |
+| **Status**    | ✅ Fixed                                              |
 | **Component** | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` |
 
 #### Original Problem
@@ -365,10 +365,10 @@ The warning is now prominently displayed in the summary (Lines 11-19 in FilterBu
 
 ### SEC-006: Test Credential Lifecycle
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🟡 Low |
-| **Status** | ✅ Fixed |
+| Field         | Value              |
+| ------------- | ------------------ |
+| **Severity**  | 🟡 Low              |
+| **Status**    | ✅ Fixed            |
 | **Component** | `test_auth_env.sh` |
 
 #### Original Problem
@@ -412,10 +412,10 @@ echo ""
 
 ### SEC-007: Arbitrary Type in GraphQL Variables
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🟡 Low |
-| **Status** | ✅ Fixed |
+| Field         | Value                                            |
+| ------------- | ------------------------------------------------ |
+| **Severity**  | 🟡 Low                                            |
+| **Status**    | ✅ Fixed                                          |
 | **Component** | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` |
 
 #### Original Problem
@@ -459,10 +459,10 @@ public Dictionary<string, object> Variables { get; set; }
 
 ### SEC-008: Static JsonSerializerOptions Mutation Risk
 
-| Field | Value |
-|-------|-------|
-| **Severity** | 🟡 Low |
-| **Status** | ✅ Fixed |
+| Field         | Value                                                |
+| ------------- | ---------------------------------------------------- |
+| **Severity**  | 🟡 Low                                                |
+| **Status**    | ✅ Fixed                                              |
 | **Component** | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` |
 
 #### Original Problem
@@ -530,16 +530,16 @@ GraphQL responses properly expose error information via `HasErrors` property, al
 
 ## Remediation Tracking
 
-| ID | Status | Fixed In | Verified By | Date |
-|----|--------|----------|-------------|------|
-| SEC-001 | ✅ Fixed | DataModels.cs | Unit Tests (64 passing) | 2026-01-11 |
-| SEC-002 | ⚠️ Out of Scope | N/A (F# layer) | N/A | N/A |
-| SEC-003 | ✅ Fixed | Query.cs | Code Review | 2026-01-11 |
-| SEC-004 | ✅ Fixed | FilterBuilder.cs | Code Review | 2026-01-11 |
-| SEC-005 | ✅ Fixed | FilterBuilder.cs | Code Review | 2026-01-11 |
-| SEC-006 | ✅ Fixed | test_auth_env.sh | Code Review | 2026-01-11 |
-| SEC-007 | ✅ Fixed | GraphQL.cs | Code Review | 2026-01-11 |
-| SEC-008 | ✅ Fixed | FilterBuilder.cs | Code Review | 2026-01-11 |
+| ID      | Status         | Fixed In         | Verified By             | Date       |
+| ------- | -------------- | ---------------- | ----------------------- | ---------- |
+| SEC-001 | ✅ Fixed        | DataModels.cs    | Unit Tests (64 passing) | 2026-01-11 |
+| SEC-002 | ⚠️ Out of Scope | N/A (F# layer)   | N/A                     | N/A        |
+| SEC-003 | ✅ Fixed        | Query.cs         | Code Review             | 2026-01-11 |
+| SEC-004 | ✅ Fixed        | FilterBuilder.cs | Code Review             | 2026-01-11 |
+| SEC-005 | ✅ Fixed        | FilterBuilder.cs | Code Review             | 2026-01-11 |
+| SEC-006 | ✅ Fixed        | test_auth_env.sh | Code Review             | 2026-01-11 |
+| SEC-007 | ✅ Fixed        | GraphQL.cs       | Code Review             | 2026-01-11 |
+| SEC-008 | ✅ Fixed        | FilterBuilder.cs | Code Review             | 2026-01-11 |
 
 ### SEC-002 Resolution Note
 
@@ -549,7 +549,7 @@ SEC-002 (Path Traversal Risk in F# Layer) is **out of scope** for this extension
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-01-11 | Security Review (AI-Assisted) | Initial review |
-| 1.1 | 2026-01-11 | Security Review (AI-Assisted) | Validated fixes, reformatted to show problem→recommendation→implementation |
+| Version | Date       | Author                        | Changes                                                                    |
+| ------- | ---------- | ----------------------------- | -------------------------------------------------------------------------- |
+| 1.0     | 2026-01-11 | Security Review (AI-Assisted) | Initial review                                                             |
+| 1.1     | 2026-01-11 | Security Review (AI-Assisted) | Validated fixes, reformatted to show problem→recommendation→implementation |
