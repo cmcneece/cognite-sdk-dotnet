@@ -1,225 +1,303 @@
-# Technical Reference: Data Modeling Extensions
+# Feature Parity Analysis: Python SDK vs .NET SDK
 
-This document provides technical details about the Data Modeling extensions in this fork.
+This document analyzes the Data Modeling feature gap between the [Cognite Python SDK](https://cognite-sdk-python.readthedocs-hosted.com/) and the official .NET SDK, and documents what this fork adds to close that gap.
 
-## Extensions Overview
+## Executive Summary
 
-| Extension        | Purpose                                            | Python SDK Equivalent                  |
-| ---------------- | -------------------------------------------------- | -------------------------------------- |
-| FilterBuilder    | Fluent API for constructing DMS filters            | `cognite.client.data_modeling.filters` |
-| SyncMode         | Sync mode control (onePhase, twoPhase, noBackfill) | `sync_mode` parameter                  |
-| SyncBackfillSort | Backfill sort specification for two-phase sync     | `backfill_sort` parameter              |
-| GraphQL Resource | Execute GraphQL queries against Data Models        | `client.data_modeling.graphql`         |
+| Feature Area | Python SDK | .NET SDK (Official) | .NET SDK (This Fork) |
+|--------------|------------|---------------------|----------------------|
+| Fluent Filter Builder | ✅ Full | ❌ None | ✅ Full |
+| Sync Modes | ✅ Full | ❌ None | ✅ Full |
+| GraphQL Client | ✅ Full | ❌ None | ✅ Full |
+| Async Streaming | ✅ Full | ❌ None | ❌ Not possible (C# 7.3) |
 
-## FilterBuilder
+## Detailed Analysis
 
-### API Reference
+### 1. Filter Building
 
-```csharp
-public class FilterBuilder
-{
-    // Factory
-    public static FilterBuilder Create();
-    
-    // Leaf Filters
-    public FilterBuilder HasData(params ViewIdentifier[] views);
-    public FilterBuilder Equals(ViewIdentifier view, string property, string|double|long|bool value);
-    public FilterBuilder In(ViewIdentifier view, string property, params string[] values);
-    public FilterBuilder Range(ViewIdentifier view, string property, double? gte, double? gt, double? lte, double? lt);
-    public FilterBuilder Prefix(ViewIdentifier view, string property, string prefix);
-    public FilterBuilder Exists(ViewIdentifier view, string property);
-    public FilterBuilder ContainsAny(ViewIdentifier view, string property, params string[] values);
-    public FilterBuilder ContainsAll(ViewIdentifier view, string property, params string[] values);
-    
-    // Logical Operators
-    public FilterBuilder And(params FilterBuilder[] filters);
-    public FilterBuilder And(FilterBuilder other);
-    public FilterBuilder Or(params FilterBuilder[] filters);
-    public FilterBuilder Not(FilterBuilder filter);
-    public FilterBuilder Nested(IEnumerable<string> scope, FilterBuilder filter);
-    public FilterBuilder MatchAll();
-    
-    // Parameterized Queries
-    public static IDMSValue Parameter(string parameterName);
-    
-    // Build
-    public IDMSFilter Build();
-    public IDMSFilter BuildOrNull();  // Returns null if no filters added
-}
+#### Python SDK
+
+The Python SDK provides a fluent filter API in `cognite.client.data_modeling.filters`:
+
+```python
+from cognite.client.data_modeling import filters as f
+
+# Fluent filter construction
+filter = f.And(
+    f.HasData(views=[my_view]),
+    f.Equals(my_view.as_property_ref("status"), "active"),
+    f.Range(my_view.as_property_ref("temperature"), gte=20.0, lte=30.0)
+)
+
+result = client.data_modeling.instances.search(
+    view=my_view,
+    filter=filter
+)
 ```
 
-### Property Path Format
+#### .NET SDK (Official)
 
-FilterBuilder uses a 3-element property path: `[space, "view/version", property]`
-
-```csharp
-var view = new ViewIdentifier("mySpace", "myView", "1");
-
-// Generates: ["mySpace", "myView/1", "temperature"]
-FilterBuilder.Create().Equals(view, "temperature", 25.0);
-```
-
-### Integration with Query API
+The official .NET SDK has filter *types* but no fluent builder:
 
 ```csharp
-var filter = FilterBuilder.Create()
-    .Equals(view, "status", "active")
-    .Build();
-
-var query = new Query
+// Must manually construct filter objects
+var filter = new AndFilter
 {
-    With = new Dictionary<string, IQueryTableExpression>
+    And = new List<IDMSFilter>
     {
-        { "nodes", new QueryNodeTableExpression
-        {
-            Nodes = new QueryNodes { Filter = filter }
-        }}
-    },
-    Select = new Dictionary<string, SelectExpression>
-    {
-        { "nodes", new SelectExpression
-        {
-            Sources = new[] { new SelectSource { Source = view } }
-        }}
+        new HasDataFilter { HasData = new[] { myView } },
+        new EqualsFilter 
+        { 
+            Property = new[] { "mySpace", "myView/1", "status" },
+            Value = new RawPropertyValue<string>("active")
+        },
+        // ... verbose and error-prone
     }
 };
-
-var result = await client.DataModels.QueryInstances<MyType>(query);
 ```
 
-## SyncQuery Extensions
+#### .NET SDK (This Fork)
 
-### New Properties
+This fork adds `FilterBuilder` for Python-like fluency:
 
 ```csharp
-public class SyncQuery : Query
-{
-    /// <summary>Sync mode: onePhase, twoPhase, or noBackfill</summary>
-    public SyncMode? Mode { get; set; }
-    
-    /// <summary>Sort specification for backfill phase (twoPhase only)</summary>
-    public IEnumerable<SyncBackfillSort> BackfillSort { get; set; }
-    
-    /// <summary>Allow expired cursors (may miss soft deletes)</summary>
-    public bool? AllowExpiredCursorsAndAcceptMissedDeletes { get; set; }
-}
+using CogniteSdk.DataModels;
+
+var filter = FilterBuilder.Create()
+    .HasData(myView)
+    .And(FilterBuilder.Create()
+        .Equals(myView, "status", "active")
+        .Range(myView, "temperature", gte: 20.0, lte: 30.0))
+    .Build();
 ```
 
-### SyncMode Enum
+#### Comparison
+
+| Python SDK Method | This Fork's Equivalent |
+|-------------------|------------------------|
+| `f.HasData(views)` | `.HasData(views)` |
+| `f.Equals(prop, value)` | `.Equals(view, prop, value)` |
+| `f.In(prop, values)` | `.In(view, prop, values)` |
+| `f.Range(prop, gte, lte)` | `.Range(view, prop, gte, lte)` |
+| `f.Prefix(prop, prefix)` | `.Prefix(view, prop, prefix)` |
+| `f.Exists(prop)` | `.Exists(view, prop)` |
+| `f.ContainsAny(prop, values)` | `.ContainsAny(view, prop, values)` |
+| `f.ContainsAll(prop, values)` | `.ContainsAll(view, prop, values)` |
+| `f.And(*filters)` | `.And(filters)` |
+| `f.Or(*filters)` | `.Or(filters)` |
+| `f.Not(filter)` | `.Not(filter)` |
+| `f.Nested(scope, filter)` | `.Nested(scope, filter)` |
+| `f.MatchAll()` | `.MatchAll()` |
+
+**Gap Status: ✅ Closed**
+
+---
+
+### 2. Sync Modes
+
+#### Python SDK
+
+The Python SDK supports sync modes for incremental data synchronization:
+
+```python
+result = client.data_modeling.instances.sync(
+    view=my_view,
+    sync_mode="twoPhase",  # or "onePhase", "noBackfill"
+    backfill_sort=[{
+        "property": ["mySpace", "myView/1", "timestamp"],
+        "direction": "ascending",
+        "nulls_first": False
+    }],
+    allow_expired_cursors_and_accept_missed_deletes=True
+)
+```
+
+#### .NET SDK (Official)
+
+The official .NET SDK has `SyncQuery` but lacks:
+- `mode` parameter (sync mode selection)
+- `backfill_sort` parameter (backfill ordering)
+- `allow_expired_cursors_and_accept_missed_deletes` parameter
 
 ```csharp
-public enum SyncMode
+// Only basic sync is supported
+var syncQuery = new SyncQuery
 {
-    [JsonPropertyName("onePhase")]
-    onePhase,
-    
-    [JsonPropertyName("twoPhase")]
-    twoPhase,
-    
-    [JsonPropertyName("noBackfill")]
-    noBackfill
-}
+    With = { ... },
+    Select = { ... },
+    Cursors = cursor  // Basic cursor support only
+};
 ```
 
-### SyncBackfillSort Class
+#### .NET SDK (This Fork)
+
+This fork extends `SyncQuery` with full sync mode support:
 
 ```csharp
-public class SyncBackfillSort
+using CogniteSdk.DataModels;
+
+var syncQuery = new SyncQuery
 {
-    /// <summary>Property path (validated: not null, not empty, no null segments)</summary>
-    public IEnumerable<string> Property { get; set; }
-    
-    /// <summary>Sort direction</summary>
-    public SortDirection Direction { get; set; }
-    
-    /// <summary>Whether nulls sort first</summary>
-    public bool NullsFirst { get; set; }
-}
+    Mode = SyncMode.twoPhase,
+    BackfillSort = new[] 
+    { 
+        new SyncBackfillSort 
+        { 
+            Property = new[] { "mySpace", "myView/1", "timestamp" },
+            Direction = SortDirection.ascending,
+            NullsFirst = false
+        } 
+    },
+    AllowExpiredCursorsAndAcceptMissedDeletes = true,
+    With = { ... },
+    Select = { ... }
+};
 ```
 
-## GraphQL Resource
+#### Comparison
 
-### API Reference
+| Python SDK Parameter | This Fork's Equivalent |
+|----------------------|------------------------|
+| `sync_mode="onePhase"` | `Mode = SyncMode.onePhase` |
+| `sync_mode="twoPhase"` | `Mode = SyncMode.twoPhase` |
+| `sync_mode="noBackfill"` | `Mode = SyncMode.noBackfill` |
+| `backfill_sort=[...]` | `BackfillSort = new[] { ... }` |
+| `allow_expired_cursors_and_accept_missed_deletes=True` | `AllowExpiredCursorsAndAcceptMissedDeletes = true` |
+
+**Gap Status: ✅ Closed** (Note: API support for `mode` varies by CDF cluster version)
+
+---
+
+### 3. GraphQL Client
+
+#### Python SDK
+
+The Python SDK provides a GraphQL client for Data Models:
+
+```python
+result = client.data_modeling.graphql.query(
+    space="my-space",
+    external_id="my-data-model",
+    version="1",
+    query="""
+        query {
+            listEquipment(limit: 10) {
+                items {
+                    name
+                    manufacturer
+                }
+            }
+        }
+    """
+)
+
+# Schema introspection
+schema = client.data_modeling.graphql.introspect(
+    space="my-space",
+    external_id="my-data-model",
+    version="1"
+)
+```
+
+#### .NET SDK (Official)
+
+The official .NET SDK has **no GraphQL support**.
+
+#### .NET SDK (This Fork)
+
+This fork adds `GraphQLResource`:
 
 ```csharp
-public class GraphQLResource
-{
-    public GraphQLResource(
-        HttpClient httpClient,
-        string project,
-        string baseUrl,
-        Func<CancellationToken, Task<string>> tokenProvider);
-    
-    /// <summary>Execute typed GraphQL query</summary>
-    public Task<GraphQLResponse<T>> QueryAsync<T>(
-        string space, string externalId, string version, string query,
-        Dictionary<string, object> variables = null,
-        CancellationToken token = default);
-    
-    /// <summary>Execute raw GraphQL query (returns JsonElement)</summary>
-    public Task<GraphQLRawResponse> QueryRawAsync(
-        string space, string externalId, string version, string query,
-        Dictionary<string, object> variables = null,
-        CancellationToken token = default);
-    
-    /// <summary>Get schema via introspection</summary>
-    public Task<GraphQLRawResponse> IntrospectAsync(
-        string space, string externalId, string version,
-        CancellationToken token = default);
-}
+using CogniteSdk.Resources.DataModels;
+
+var graphql = new GraphQLResource(
+    httpClient,
+    project: "my-project",
+    baseUrl: "https://api.cognitedata.com",
+    tokenProvider: async (ct) => await GetAccessTokenAsync()
+);
+
+var result = await graphql.QueryAsync<MyResponseType>(
+    space: "my-space",
+    externalId: "my-data-model",
+    version: "1",
+    query: @"
+        query {
+            listEquipment(limit: 10) {
+                items {
+                    name
+                    manufacturer
+                }
+            }
+        }
+    "
+);
+
+// Schema introspection
+var schema = await graphql.IntrospectAsync(space, modelId, version);
 ```
 
-### Response Types
+#### Comparison
 
-```csharp
-public class GraphQLResponse<T>
-{
-    public T Data { get; set; }
-    public IEnumerable<GraphQLError> Errors { get; set; }
-    public JsonElement? Extensions { get; set; }
-    public bool HasErrors { get; }
-}
+| Python SDK Method | This Fork's Equivalent |
+|-------------------|------------------------|
+| `client.data_modeling.graphql.query(...)` | `graphql.QueryAsync<T>(...)` |
+| `client.data_modeling.graphql.query(...)` (raw) | `graphql.QueryRawAsync(...)` |
+| `client.data_modeling.graphql.introspect(...)` | `graphql.IntrospectAsync(...)` |
 
-public class GraphQLError
-{
-    public string Message { get; set; }
-    public IEnumerable<GraphQLErrorLocation> Locations { get; set; }
-    public IEnumerable<object> Path { get; set; }
-    public JsonElement? Extensions { get; set; }
-}
+**Gap Status: ✅ Closed** (Note: Standalone implementation, not via `client.GraphQL`)
+
+---
+
+### 4. Async Streaming (IAsyncEnumerable)
+
+#### Python SDK
+
+The Python SDK supports async generators for streaming large result sets:
+
+```python
+async for item in client.data_modeling.instances.iterate(
+    view=my_view,
+    chunk_size=1000
+):
+    process(item)
 ```
 
-### URL Format
+#### .NET SDK (Official)
 
-GraphQL queries are sent to:
-```
-POST {baseUrl}/api/v1/projects/{project}/models/spaces/{space}/datamodels/{externalId}/versions/{version}/graphql
-```
+No async streaming support.
 
-## Test Coverage
+#### .NET SDK (This Fork)
 
-| Test File                          | Tests  | Description                                  |
-| ---------------------------------- | ------ | -------------------------------------------- |
-| `FilterBuilderTests.cs`            | 26     | Unit tests for all filter operations         |
-| `SyncQueryTests.cs`                | 13     | Unit tests for SyncMode and SyncBackfillSort |
-| `FilterBuilderIntegrationTests.cs` | 7      | Integration tests against live CDF           |
-| `SyncGraphQLIntegrationTests.cs`   | 5      | Integration tests for Sync and GraphQL       |
-| **Total**                          | **51** |                                              |
+**Not implemented.** The SDK targets .NET Standard 2.0, which uses C# 7.3. `IAsyncEnumerable` requires C# 8.0+.
 
-## Known Limitations
+**Gap Status: ❌ Cannot close** (would require SDK to target newer .NET version)
 
-| Limitation                                       | Reason                                    |
-| ------------------------------------------------ | ----------------------------------------- |
-| `SyncMode` may not work on all clusters          | API feature not yet universally available |
-| GraphQL is standalone (not via `client.GraphQL`) | Would require F#/Oryx layer modifications |
-| No `IAsyncEnumerable` streaming                  | SDK targets .NET Standard 2.0 (C# 7.3)    |
+---
 
-## SDK Compatibility
+## Features Already at Parity
 
-| Aspect                | Status                                     |
-| --------------------- | ------------------------------------------ |
-| .NET Standard 2.0     | ✅ Compatible                               |
-| C# 7.3                | ✅ Compatible                               |
-| Paket dependencies    | ✅ No new dependencies                      |
-| Namespace conventions | ✅ Uses `CogniteSdk.DataModels`             |
-| Return types          | ✅ Uses `IDMSFilter`, `RawPropertyValue<T>` |
+The following features already exist in the official .NET SDK and did **not** need to be added:
+
+| Feature | .NET SDK Method |
+|---------|-----------------|
+| Search API | `client.DataModels.SearchInstances<T>()` |
+| Aggregate API | `client.DataModels.AggregateInstances()` |
+| Query API | `client.DataModels.QueryInstances<T>()` |
+| Sync API | `client.DataModels.SyncInstances<T>()` |
+| Filter Types | `EqualsFilter`, `AndFilter`, `RangeFilter`, etc. |
+| Query Types | `QueryNodeTableExpression`, `QueryEdgeTableExpression`, etc. |
+
+---
+
+## Summary
+
+| Gap | Python SDK Feature | Fork Resolution |
+|-----|-------------------|-----------------|
+| Fluent filters | `cognite.client.data_modeling.filters` | `FilterBuilder` class |
+| Sync modes | `sync_mode` parameter | `SyncMode` enum + `SyncQuery` properties |
+| Backfill sort | `backfill_sort` parameter | `SyncBackfillSort` class |
+| GraphQL | `client.data_modeling.graphql` | `GraphQLResource` class |
+| Async streaming | `async for item in ...` | ❌ Not possible (C# version constraint) |
+
+This fork closes **4 of 5** identified gaps. The async streaming gap cannot be closed without changes to the SDK's target framework.
