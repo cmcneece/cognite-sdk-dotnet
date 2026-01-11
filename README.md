@@ -8,6 +8,30 @@
 [![codecov](https://codecov.io/gh/cognitedata/cognite-sdk-dotnet/branch/master/graph/badge.svg?token=da8aPB6l9U)](https://codecov.io/gh/cognitedata/cognite-sdk-dotnet)
 [![Nuget](https://img.shields.io/nuget/vpre/CogniteSdk)](https://www.nuget.org/packages/CogniteSdk/)
 
+---
+
+## 🚀 Data Modeling Extensions (This Fork)
+
+This fork adds Data Modeling features to bring the .NET SDK closer to **feature parity with the Python SDK**:
+
+| Feature | Description |
+|---------|-------------|
+| **FilterBuilder** | Fluent API for building DMS filters: `.Equals()`, `.And()`, `.Range()`, etc. |
+| **SyncMode** | Support for `onePhase`, `twoPhase`, and `noBackfill` sync modes |
+| **GraphQL Client** | Execute GraphQL queries against CDF Data Models |
+
+```bash
+git checkout feature/data-modeling-extensions
+dotnet build
+dotnet test CogniteSdk/test/csharp/ --filter "FullyQualifiedName~Test.CSharp.Unit"
+```
+
+📖 **[Full documentation →](CONTRIBUTING_EXTENSIONS.md)**
+
+> ⚠️ **AI Disclosure**: Developed with AI assistance. 51 tests (39 unit + 12 integration).
+
+---
+
 CogniteSdk for .NET is a cross platform asynchronous SDK for accessing the [Cognite Data Fusion](https://docs.cognite.com/) [API (v1)](https://docs.cognite.com/api/v1/) using [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) that works for all .NET implementations i.e both [.NET Core](https://en.wikipedia.org/wiki/.NET_Core) and [.NET Framework](https://en.wikipedia.org/wiki/.NET_Framework).
 
 **Unofficial**: please note that this is an unofficial and community driven SDK. Feel free to open issues, or provide PRs if you want to improve the library.
