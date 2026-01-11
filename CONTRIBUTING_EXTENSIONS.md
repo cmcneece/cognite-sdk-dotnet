@@ -238,9 +238,6 @@ var filter = FilterBuilder.Create()
         .Range(myView, "temperature", gte: 20.0, lte: 30.0))
     .Build();
 ```
-
-## AI Disclosure
-This code was developed with AI assistance (Claude via Cursor).
 ```
 
 ---
@@ -265,9 +262,6 @@ Adds comprehensive unit tests for the FilterBuilder fluent API.
 - Tests for value types (string, double, long, bool)
 - Tests for parameterized queries
 - Edge cases (empty filters, null handling)
-
-## AI Disclosure
-This code was developed with AI assistance (Claude via Cursor).
 ```
 
 ---
@@ -305,9 +299,6 @@ var syncQuery = new SyncQuery
 
 ## Note
 The `mode` field is forward-compatible; API support may vary by CDF cluster version.
-
-## AI Disclosure
-This code was developed with AI assistance (Claude via Cursor).
 ```
 
 ---
@@ -341,9 +332,6 @@ var result = await graphql.QueryAsync<MyType>(space, modelId, version, query);
 
 ## Design Decision
 Implemented as standalone class to minimize changes to the F#/Oryx layer. The trade-off is that GraphQL is not accessible via `client.GraphQL`.
-
-## AI Disclosure
-This code was developed with AI assistance (Claude via Cursor).
 ```
 
 ---
@@ -370,9 +358,6 @@ Adds integration tests for FilterBuilder against a live CDF cluster.
 
 ## Prerequisites
 Requires `.env` file with CDF credentials (see CONTRIBUTING_EXTENSIONS.md).
-
-## AI Disclosure
-This code was developed with AI assistance (Claude via Cursor).
 ```
 
 ---
@@ -402,9 +387,6 @@ Requires `.env` file with CDF credentials (see CONTRIBUTING_EXTENSIONS.md).
 
 ## Note
 SyncMode tests are limited as the `mode` field is not yet supported on all clusters.
-
-## AI Disclosure
-This code was developed with AI assistance (Claude via Cursor).
 ```
 
 ## File Reference
