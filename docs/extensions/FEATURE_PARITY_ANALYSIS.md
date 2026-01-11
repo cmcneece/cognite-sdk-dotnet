@@ -234,11 +234,11 @@ var schema = await client.DataModels.GraphQLIntrospect(space, modelId, version);
 
 #### Comparison
 
-| Python SDK Method                               | This Fork's Equivalent                          |
-| ----------------------------------------------- | ----------------------------------------------- |
-| `client.data_modeling.graphql.query(...)`       | `client.DataModels.GraphQLQuery<T>(...)`        |
-| `client.data_modeling.graphql.query(...)` (raw) | `client.DataModels.GraphQLQueryRaw(...)`        |
-| `client.data_modeling.graphql.introspect(...)`  | `client.DataModels.GraphQLIntrospect(...)`      |
+| Python SDK Method                               | This Fork's Equivalent                     |
+| ----------------------------------------------- | ------------------------------------------ |
+| `client.data_modeling.graphql.query(...)`       | `client.DataModels.GraphQLQuery<T>(...)`   |
+| `client.data_modeling.graphql.query(...)` (raw) | `client.DataModels.GraphQLQueryRaw(...)`   |
+| `client.data_modeling.graphql.introspect(...)`  | `client.DataModels.GraphQLIntrospect(...)` |
 
 **Gap Status: ✅ Closed** (Fully integrated into the Oryx HTTP pipeline)
 
@@ -292,7 +292,7 @@ The following features already exist in the official .NET SDK and did **not** ne
 | Fluent filters  | `cognite.client.data_modeling.filters` | `FilterBuilder` class                    |
 | Sync modes      | `sync_mode` parameter                  | `SyncMode` enum + `SyncQuery` properties |
 | Backfill sort   | `backfill_sort` parameter              | `SyncBackfillSort` class                 |
-| GraphQL         | `client.data_modeling.graphql`         | `GraphQLResource` class                  |
+| GraphQL         | `client.data_modeling.graphql`         | `client.DataModels.GraphQL*` methods     |
 | Async streaming | `async for item in ...`                | ❌ Not possible (C# version constraint)   |
 
 This fork closes **4 of 5** identified gaps. The async streaming gap cannot be closed without changes to the SDK's target framework.
