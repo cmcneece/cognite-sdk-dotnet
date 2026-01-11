@@ -16,6 +16,40 @@ This fork adds these capabilities to the .NET SDK while maintaining compatibilit
 
 This code was developed with AI assistance (Claude via Cursor). See `docs/extensions/DEVELOPMENT_PROCESS.md` for the full development history and QA process.
 
+## Security
+
+These extensions underwent a security review. See [`docs/extensions/SECURITY_REVIEW.md`](docs/extensions/SECURITY_REVIEW.md) for the full review, findings, and remediations.
+
+### Key Security Features
+
+| Feature | Implementation |
+|---------|----------------|
+| **Input Validation** | All public methods validate inputs (null checks, bounds, path traversal prevention) |
+| **GraphQL Protection** | Identifier validation blocks `..`, `/`, `\`, `%` characters; query length limited to 100KB |
+| **Thread Safety** | `FilterBuilder` is explicitly NOT thread-safe (documented); create new instances per operation |
+| **Credential Handling** | `.env` files gitignored; test scripts include cleanup guidance |
+
+### Security Considerations for Users
+
+1. **FilterBuilder.ToString()**: Serializes filter values to JSON. Avoid logging in production if filters contain sensitive data (PII, tokens).
+
+2. **GraphQL Variables**: Avoid passing sensitive data as variables if request logging is enabled.
+
+3. **AllowExpiredCursorsAndAcceptMissedDeletes**: ⚠️ **Use with caution in regulated environments.** Enabling this may cause:
+   - Missed soft-deleted records
+   - Audit trail gaps
+   - Potential compliance issues (21 CFR Part 11, GDPR, SOX)
+
+### Security Validation Checklist
+
+When modifying these extensions, ensure:
+
+- [ ] All public method parameters are validated before use
+- [ ] GraphQL identifiers (space, externalId, version) are validated for path traversal
+- [ ] Sensitive data exposure is documented in XML comments
+- [ ] Thread safety assumptions are clearly documented
+- [ ] No credentials are hardcoded or committed
+
 ## Features
 
 ### 1. FilterBuilder - Fluent Filter API
