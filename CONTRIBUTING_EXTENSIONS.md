@@ -200,12 +200,15 @@ PRs 1, 3, and 4 can be submitted in parallel as they have no dependencies on eac
 
 ### PR 1: FilterBuilder - Fluent Filter API
 
-**Title:** `feat(datamodels): add FilterBuilder fluent API for DMS filters`
+| Field | Value |
+|-------|-------|
+| **Title** | `feat(datamodels): add FilterBuilder fluent API for DMS filters` |
+| **Files** | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` (471 lines) |
+| **Dependencies** | None |
 
-**Files:**
-- `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` (471 lines)
+<details>
+<summary><strong>PR Description Template</strong></summary>
 
-**Description:**
 ```markdown
 ## Summary
 Adds a fluent API for building Data Model filters, bringing the .NET SDK closer to feature parity with the Python SDK's `cognite.client.data_modeling.filters` module.
@@ -220,28 +223,31 @@ The Python SDK provides convenient filter builder methods like `Filter.Equals()`
 - Supports parameterized queries
 
 ## Usage
-```csharp
+\```csharp
 var filter = FilterBuilder.Create()
     .HasData(myView)
     .And(FilterBuilder.Create()
         .Equals(myView, "status", "active")
         .Range(myView, "temperature", gte: 20.0, lte: 30.0))
     .Build();
+\```
 ```
-```
+
+</details>
 
 ---
 
 ### PR 2: FilterBuilder Unit Tests
 
-**Title:** `test(datamodels): add FilterBuilder unit tests`
+| Field | Value |
+|-------|-------|
+| **Title** | `test(datamodels): add FilterBuilder unit tests` |
+| **Files** | `CogniteSdk/test/csharp/FilterBuilderTests.cs` (291 lines) |
+| **Dependencies** | PR 1 |
 
-**Files:**
-- `CogniteSdk/test/csharp/FilterBuilderTests.cs` (291 lines)
+<details>
+<summary><strong>PR Description Template</strong></summary>
 
-**Dependencies:** PR 1
-
-**Description:**
 ```markdown
 ## Summary
 Adds comprehensive unit tests for the FilterBuilder fluent API.
@@ -254,17 +260,21 @@ Adds comprehensive unit tests for the FilterBuilder fluent API.
 - Edge cases (empty filters, null handling)
 ```
 
+</details>
+
 ---
 
 ### PR 3: SyncQuery Extensions
 
-**Title:** `feat(datamodels): add SyncMode and SyncBackfillSort to SyncQuery`
+| Field | Value |
+|-------|-------|
+| **Title** | `feat(datamodels): add SyncMode and SyncBackfillSort to SyncQuery` |
+| **Files** | `CogniteSdk.Types/DataModels/Query/Query.cs` (~100 lines added), `CogniteSdk/test/csharp/SyncQueryTests.cs` (157 lines) |
+| **Dependencies** | None |
 
-**Files:**
-- `CogniteSdk.Types/DataModels/Query/Query.cs` (changes only, ~100 lines added)
-- `CogniteSdk/test/csharp/SyncQueryTests.cs` (157 lines)
+<details>
+<summary><strong>PR Description Template</strong></summary>
 
-**Description:**
 ```markdown
 ## Summary
 Extends `SyncQuery` with sync modes and backfill sorting, matching the Python SDK's sync capabilities.
@@ -278,31 +288,34 @@ The Python SDK supports `sync_mode` parameter with values `onePhase`, `twoPhase`
 - Add `Mode`, `BackfillSort`, and `AllowExpiredCursorsAndAcceptMissedDeletes` properties to `SyncQuery`
 
 ## Usage
-```csharp
+\```csharp
 var syncQuery = new SyncQuery
 {
     Mode = SyncMode.twoPhase,
     BackfillSort = new[] { new SyncBackfillSort { Property = new[] { "space", "view/1", "prop" } } },
     // ...
 };
-```
+\```
 
 ## Note
 The `mode` field is forward-compatible; API support may vary by CDF cluster version.
 ```
 
+</details>
+
 ---
 
 ### PR 4: GraphQL Client
 
-**Title:** `feat(datamodels): add GraphQL client for Data Model queries`
+| Field | Value |
+|-------|-------|
+| **Title** | `feat(datamodels): add GraphQL client for Data Model queries` |
+| **Files** | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` (143 lines), `Oryx.Cognite/src/DataModels.fs` (~40 lines), `CogniteSdk/src/Resources/DataModels.cs` (~120 lines) |
+| **Dependencies** | None |
 
-**Files:**
-- `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` (143 lines)
-- `Oryx.Cognite/src/DataModels.fs` (additions, ~40 lines)
-- `CogniteSdk/src/Resources/DataModels.cs` (additions, ~120 lines)
+<details>
+<summary><strong>PR Description Template</strong></summary>
 
-**Description:**
 ```markdown
 ## Summary
 Adds a GraphQL client for executing queries against CDF Data Models, matching the Python SDK's `client.data_modeling.graphql` functionality.
@@ -317,25 +330,28 @@ The Python SDK provides a GraphQL endpoint for Data Models. This PR adds equival
 - Fully integrated into the Oryx HTTP pipeline
 
 ## Usage
-```csharp
+\```csharp
 var result = await client.DataModels.GraphQLQuery<MyType>(space, modelId, version, query);
 var raw = await client.DataModels.GraphQLQueryRaw(space, modelId, version, query);
 var schema = await client.DataModels.GraphQLIntrospect(space, modelId, version);
+\```
 ```
-```
+
+</details>
 
 ---
 
 ### PR 5: FilterBuilder Integration Tests
 
-**Title:** `test(datamodels): add FilterBuilder integration tests`
+| Field | Value |
+|-------|-------|
+| **Title** | `test(datamodels): add FilterBuilder integration tests` |
+| **Files** | `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` (519 lines) |
+| **Dependencies** | PR 1, PR 2 |
 
-**Files:**
-- `CogniteSdk/test/csharp/FilterBuilderIntegrationTests.cs` (519 lines)
+<details>
+<summary><strong>PR Description Template</strong></summary>
 
-**Dependencies:** PR 1, PR 2
-
-**Description:**
 ```markdown
 ## Summary
 Adds integration tests for FilterBuilder against a live CDF cluster.
@@ -350,18 +366,21 @@ Adds integration tests for FilterBuilder against a live CDF cluster.
 Requires `.env` file with CDF credentials (see CONTRIBUTING_EXTENSIONS.md).
 ```
 
+</details>
+
 ---
 
 ### PR 6: Sync + GraphQL Integration Tests
 
-**Title:** `test(datamodels): add Sync and GraphQL integration tests`
+| Field | Value |
+|-------|-------|
+| **Title** | `test(datamodels): add Sync and GraphQL integration tests` |
+| **Files** | `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` (328 lines) |
+| **Dependencies** | PR 3, PR 4 |
 
-**Files:**
-- `CogniteSdk/test/csharp/SyncGraphQLIntegrationTests.cs` (328 lines)
+<details>
+<summary><strong>PR Description Template</strong></summary>
 
-**Dependencies:** PR 3, PR 4
-
-**Description:**
 ```markdown
 ## Summary
 Adds integration tests for SyncQuery extensions and GraphQL resource against a live CDF cluster.
@@ -378,6 +397,8 @@ Requires `.env` file with CDF credentials (see CONTRIBUTING_EXTENSIONS.md).
 ## Note
 SyncMode tests are limited as the `mode` field is not yet supported on all clusters.
 ```
+
+</details>
 
 ## File Reference
 
