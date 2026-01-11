@@ -330,5 +330,143 @@ namespace CogniteSdk.Resources
             var req = Oryx.Cognite.DataModels.syncInstances<T>(query, GetContext(token));
             return await RunAsync(req).ConfigureAwait(false);
         }
+
+        #region GraphQL
+
+        /// <summary>
+        /// Execute a typed GraphQL query against a data model.
+        /// </summary>
+        /// <typeparam name="T">Type to deserialize the response data into</typeparam>
+        /// <param name="space">Space containing the data model</param>
+        /// <param name="externalId">External ID of the data model</param>
+        /// <param name="version">Version of the data model</param>
+        /// <param name="query">GraphQL query string</param>
+        /// <param name="variables">Optional variables to pass to the query</param>
+        /// <param name="operationName">Optional operation name when query contains multiple operations</param>
+        /// <param name="token">Optional cancellation token</param>
+        /// <returns>GraphQL response with typed data</returns>
+        public async Task<GraphQLResponse<T>> GraphQLQuery<T>(
+            string space,
+            string externalId,
+            string version,
+            string query,
+            Dictionary<string, object> variables = null,
+            string operationName = null,
+            CancellationToken token = default)
+        {
+            var request = new GraphQLRequest
+            {
+                Query = query,
+                Variables = variables,
+                OperationName = operationName
+            };
+            var req = Oryx.Cognite.DataModels.graphqlQuery<T>(space, externalId, version, request, GetContext(token));
+            return await RunAsync(req).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Execute a raw GraphQL query against a data model.
+        /// Returns the response with data as a JsonElement for manual parsing.
+        /// </summary>
+        /// <param name="space">Space containing the data model</param>
+        /// <param name="externalId">External ID of the data model</param>
+        /// <param name="version">Version of the data model</param>
+        /// <param name="query">GraphQL query string</param>
+        /// <param name="variables">Optional variables to pass to the query</param>
+        /// <param name="operationName">Optional operation name when query contains multiple operations</param>
+        /// <param name="token">Optional cancellation token</param>
+        /// <returns>GraphQL response with raw JsonElement data</returns>
+        public async Task<GraphQLRawResponse> GraphQLQueryRaw(
+            string space,
+            string externalId,
+            string version,
+            string query,
+            Dictionary<string, object> variables = null,
+            string operationName = null,
+            CancellationToken token = default)
+        {
+            var request = new GraphQLRequest
+            {
+                Query = query,
+                Variables = variables,
+                OperationName = operationName
+            };
+            var req = Oryx.Cognite.DataModels.graphqlQueryRaw(space, externalId, version, request, GetContext(token));
+            return await RunAsync(req).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get the GraphQL schema for a data model via introspection.
+        /// </summary>
+        /// <param name="space">Space containing the data model</param>
+        /// <param name="externalId">External ID of the data model</param>
+        /// <param name="version">Version of the data model</param>
+        /// <param name="token">Optional cancellation token</param>
+        /// <returns>GraphQL introspection response</returns>
+        public async Task<GraphQLRawResponse> GraphQLIntrospect(
+            string space,
+            string externalId,
+            string version,
+            CancellationToken token = default)
+        {
+            const string introspectionQuery = @"
+                query IntrospectionQuery {
+                    __schema {
+                        queryType { name }
+                        mutationType { name }
+                        types {
+                            ...FullType
+                        }
+                    }
+                }
+                fragment FullType on __Type {
+                    kind
+                    name
+                    description
+                    fields(includeDeprecated: true) {
+                        name
+                        description
+                        args { ...InputValue }
+                        type { ...TypeRef }
+                        isDeprecated
+                        deprecationReason
+                    }
+                    inputFields { ...InputValue }
+                    interfaces { ...TypeRef }
+                    enumValues(includeDeprecated: true) {
+                        name
+                        description
+                        isDeprecated
+                        deprecationReason
+                    }
+                    possibleTypes { ...TypeRef }
+                }
+                fragment InputValue on __InputValue {
+                    name
+                    description
+                    type { ...TypeRef }
+                    defaultValue
+                }
+                fragment TypeRef on __Type {
+                    kind
+                    name
+                    ofType {
+                        kind
+                        name
+                        ofType {
+                            kind
+                            name
+                            ofType {
+                                kind
+                                name
+                            }
+                        }
+                    }
+                }";
+
+            return await GraphQLQueryRaw(space, externalId, version, introspectionQuery, token: token).ConfigureAwait(false);
+        }
+
+        #endregion
     }
 }

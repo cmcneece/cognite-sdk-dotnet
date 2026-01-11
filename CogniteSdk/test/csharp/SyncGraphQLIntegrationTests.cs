@@ -4,11 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using CogniteSdk;
 using CogniteSdk.DataModels;
-using CogniteSdk.Resources.DataModels;
 using Xunit;
 
 namespace Test.CSharp.Integration
@@ -181,7 +179,7 @@ namespace Test.CSharp.Integration
         #region GraphQL Integration Tests
 
         [Fact]
-        public async Task GraphQLResource_Introspection_ReturnsSchema()
+        public async Task GraphQL_Introspection_ReturnsSchema()
         {
             // Arrange: Create a data model for GraphQL testing
             var modelExtId = $"gqlmodel{_fixture.Prefix}";
@@ -198,19 +196,8 @@ namespace Test.CSharp.Integration
 
             try
             {
-                // Act: Use GraphQLResource for schema introspection
-                using var httpClient = new HttpClient();
-                var baseUrl = Environment.GetEnvironmentVariable("TEST_HOST_WRITE") ?? "https://bluefield.cognitedata.com";
-                var project = Environment.GetEnvironmentVariable("TEST_PROJECT_WRITE") ?? "colin";
-
-                var graphql = new GraphQLResource(
-                    httpClient,
-                    project,
-                    baseUrl,
-                    (ct) => Task.FromResult(Environment.GetEnvironmentVariable("TEST_TOKEN_WRITE"))
-                );
-
-                var result = await graphql.IntrospectAsync(
+                // Act: Use integrated GraphQL introspection
+                var result = await _fixture.Write.DataModels.GraphQLIntrospect(
                     _fixture.TestSpace,
                     modelExtId,
                     "1"
@@ -228,7 +215,7 @@ namespace Test.CSharp.Integration
         }
 
         [Fact]
-        public async Task GraphQLResource_QuerySchemaType_ReturnsData()
+        public async Task GraphQL_QuerySchemaType_ReturnsData()
         {
             // Arrange
             var modelExtId = $"gqlquery{_fixture.Prefix}";
@@ -245,20 +232,8 @@ namespace Test.CSharp.Integration
 
             try
             {
-                // Act
-                using var httpClient = new HttpClient();
-                var baseUrl = Environment.GetEnvironmentVariable("TEST_HOST_WRITE") ?? "https://bluefield.cognitedata.com";
-                var project = Environment.GetEnvironmentVariable("TEST_PROJECT_WRITE") ?? "colin";
-
-                var graphql = new GraphQLResource(
-                    httpClient,
-                    project,
-                    baseUrl,
-                    (ct) => Task.FromResult(Environment.GetEnvironmentVariable("TEST_TOKEN_WRITE"))
-                );
-
-                // Query the schema's query type
-                var result = await graphql.QueryRawAsync(
+                // Act: Use integrated GraphQL query
+                var result = await _fixture.Write.DataModels.GraphQLQueryRaw(
                     _fixture.TestSpace,
                     modelExtId,
                     "1",
@@ -276,7 +251,7 @@ namespace Test.CSharp.Integration
         }
 
         [Fact]
-        public async Task GraphQLResource_InvalidQuery_ReturnsErrors()
+        public async Task GraphQL_InvalidQuery_ReturnsErrors()
         {
             // Arrange
             var modelExtId = $"gqlerror{_fixture.Prefix}";
@@ -293,20 +268,8 @@ namespace Test.CSharp.Integration
 
             try
             {
-                // Act
-                using var httpClient = new HttpClient();
-                var baseUrl = Environment.GetEnvironmentVariable("TEST_HOST_WRITE") ?? "https://bluefield.cognitedata.com";
-                var project = Environment.GetEnvironmentVariable("TEST_PROJECT_WRITE") ?? "colin";
-
-                var graphql = new GraphQLResource(
-                    httpClient,
-                    project,
-                    baseUrl,
-                    (ct) => Task.FromResult(Environment.GetEnvironmentVariable("TEST_TOKEN_WRITE"))
-                );
-
-                // Send an intentionally invalid query
-                var result = await graphql.QueryRawAsync(
+                // Act: Use integrated GraphQL query with invalid query
+                var result = await _fixture.Write.DataModels.GraphQLQueryRaw(
                     _fixture.TestSpace,
                     modelExtId,
                     "1",

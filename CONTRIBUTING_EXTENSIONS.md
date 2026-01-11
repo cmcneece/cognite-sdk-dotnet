@@ -108,23 +108,13 @@ var result = await client.DataModels.SyncInstances<MyType>(syncQuery);
 
 > **Note:** The `mode` field is not yet supported by all CDF API versions. Types are included for forward compatibility.
 
-### 3. GraphQL Resource
+### 3. GraphQL Client
 
-Execute GraphQL queries against CDF Data Models:
+Execute GraphQL queries against CDF Data Models via the integrated client:
 
 ```csharp
-using CogniteSdk.Resources.DataModels;
-
-// Create GraphQL resource
-var graphql = new GraphQLResource(
-    httpClient,
-    project: "my-project",
-    baseUrl: "https://bluefield.cognitedata.com",
-    tokenProvider: async (ct) => await GetAccessTokenAsync()
-);
-
 // Execute typed query
-var result = await graphql.QueryAsync<MyResponseType>(
+var result = await client.DataModels.GraphQLQuery<MyResponseType>(
     space: "my-space",
     externalId: "my-data-model",
     version: "1",
@@ -141,10 +131,10 @@ var result = await graphql.QueryAsync<MyResponseType>(
 );
 
 // Or get raw JSON
-var raw = await graphql.QueryRawAsync(space, modelId, version, query);
+var raw = await client.DataModels.GraphQLQueryRaw(space, modelId, version, query);
 
 // Schema introspection
-var schema = await graphql.IntrospectAsync(space, modelId, version);
+var schema = await client.DataModels.GraphQLIntrospect(space, modelId, version);
 ```
 
 ## Installation
@@ -190,7 +180,7 @@ These extensions are designed to be submitted as **6 independent PRs** to the of
 | 1 | FilterBuilder | `FilterBuilder.cs` | 471 | None |
 | 2 | FilterBuilder Tests | `FilterBuilderTests.cs` | 291 | PR 1 |
 | 3 | SyncQuery Extensions | `Query.cs`, `SyncQueryTests.cs` | ~257 | None |
-| 4 | GraphQL Resource | `GraphQL.cs`, `GraphQLResource.cs` | 346 | None |
+| 4 | GraphQL Client | `GraphQL.cs`, `DataModels.fs`, `DataModels.cs` | ~400 | None |
 | 5 | FilterBuilder Integration Tests | `FilterBuilderIntegrationTests.cs` | 519 | PR 1, PR 2 |
 | 6 | Sync + GraphQL Integration Tests | `SyncGraphQLIntegrationTests.cs` | 328 | PR 3, PR 4 |
 
@@ -303,13 +293,14 @@ The `mode` field is forward-compatible; API support may vary by CDF cluster vers
 
 ---
 
-### PR 4: GraphQL Resource
+### PR 4: GraphQL Client
 
-**Title:** `feat(datamodels): add GraphQL resource for Data Model queries`
+**Title:** `feat(datamodels): add GraphQL client for Data Model queries`
 
 **Files:**
 - `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` (143 lines)
-- `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` (203 lines)
+- `Oryx.Cognite/src/DataModels.fs` (additions, ~40 lines)
+- `CogniteSdk/src/Resources/DataModels.cs` (additions, ~120 lines)
 
 **Description:**
 ```markdown
@@ -321,17 +312,16 @@ The Python SDK provides a GraphQL endpoint for Data Models. This PR adds equival
 
 ## Changes
 - Add `GraphQLRequest`, `GraphQLResponse<T>`, `GraphQLRawResponse`, and `GraphQLError` types
-- Add `GraphQLResource` with `QueryAsync<T>`, `QueryRawAsync`, and `IntrospectAsync` methods
-- Standalone implementation using HttpClient (not integrated into Oryx pipeline)
+- Add F# handlers in DataModels.fs for GraphQL queries
+- Add C# methods in DataModelsResource: `GraphQLQuery<T>`, `GraphQLQueryRaw`, `GraphQLIntrospect`
+- Fully integrated into the Oryx HTTP pipeline
 
 ## Usage
 ```csharp
-var graphql = new GraphQLResource(httpClient, project, baseUrl, tokenProvider);
-var result = await graphql.QueryAsync<MyType>(space, modelId, version, query);
+var result = await client.DataModels.GraphQLQuery<MyType>(space, modelId, version, query);
+var raw = await client.DataModels.GraphQLQueryRaw(space, modelId, version, query);
+var schema = await client.DataModels.GraphQLIntrospect(space, modelId, version);
 ```
-
-## Design Decision
-Implemented as standalone class to minimize changes to the F#/Oryx layer. The trade-off is that GraphQL is not accessible via `client.GraphQL`.
 ```
 
 ---
@@ -396,10 +386,10 @@ SyncMode tests are limited as the `mode` field is not yet supported on all clust
 | `CogniteSdk.Types/DataModels/Query/FilterBuilder.cs` | Fluent filter builder |
 | `CogniteSdk.Types/DataModels/Query/Query.cs` | SyncMode, SyncBackfillSort additions |
 | `CogniteSdk.Types/DataModels/GraphQL/GraphQL.cs` | GraphQL request/response types |
-| `CogniteSdk/src/Resources/DataModels/GraphQLResource.cs` | GraphQL query execution |
+| `Oryx.Cognite/src/DataModels.fs` | GraphQL F# handlers |
+| `CogniteSdk/src/Resources/DataModels.cs` | GraphQL C# methods |
 
 ## Limitations
 
 - **IAsyncEnumerable**: Not implemented (requires C# 8.0+, SDK targets .NET Standard 2.0)
-- **GraphQL Resource**: Standalone implementation, not integrated into Oryx pipeline
 - **SyncMode**: Forward-compatible types, API support varies by CDF version
