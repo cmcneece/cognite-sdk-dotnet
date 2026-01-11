@@ -51,6 +51,13 @@ namespace CogniteSdk.DataModels
     /// <summary>
     /// Sync mode controlling the backfill phase behavior.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Note:</b> The <c>mode</c> parameter is not yet supported by all CDF API versions.
+    /// If your cluster does not support this parameter, the API may return an error.
+    /// Check CDF API documentation for your cluster's supported features.
+    /// </para>
+    /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SyncMode
     {
@@ -133,12 +140,18 @@ namespace CogniteSdk.DataModels
         /// Sync mode controlling the backfill phase.
         /// Default is <see cref="SyncMode.onePhase"/>.
         /// </summary>
+        /// <remarks>
+        /// <b>Note:</b> Not yet supported by all CDF clusters. See <see cref="SyncMode"/> remarks.
+        /// </remarks>
         public SyncMode? Mode { get; set; }
 
         /// <summary>
         /// Sort specification for backfill phase when using <see cref="SyncMode.twoPhase"/>.
         /// Must match a cursorable index for optimal performance.
         /// </summary>
+        /// <remarks>
+        /// <b>Note:</b> Only applicable when <see cref="Mode"/> is set. See <see cref="SyncMode"/> remarks.
+        /// </remarks>
         public IEnumerable<SyncBackfillSort> BackfillSort { get; set; }
 
         /// <summary>
