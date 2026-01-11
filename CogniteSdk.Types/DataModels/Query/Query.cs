@@ -156,8 +156,42 @@ namespace CogniteSdk.DataModels
 
         /// <summary>
         /// When true, allows use of expired cursors (older than 3 days).
-        /// Warning: Using expired cursors may miss soft-deleted instances.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <b>⚠️ SECURITY AND COMPLIANCE WARNING</b>
+        /// </para>
+        /// <para>
+        /// Setting this property to <c>true</c> may result in missed soft-deleted instances.
+        /// This has significant implications:
+        /// </para>
+        /// <list type="bullet">
+        ///   <item><description>
+        ///     <b>Data Integrity</b>: Deleted records may still appear in sync results,
+        ///     leading to stale or inconsistent data in downstream systems.
+        ///   </description></item>
+        ///   <item><description>
+        ///     <b>Compliance Risk</b>: In regulated environments (21 CFR Part 11, EU Annex 11,
+        ///     SOX, GDPR), missing delete events may violate audit trail requirements.
+        ///   </description></item>
+        ///   <item><description>
+        ///     <b>Audit Trail Gaps</b>: Delete operations will not be reflected in sync results,
+        ///     creating incomplete audit histories.
+        ///   </description></item>
+        /// </list>
+        /// <para>
+        /// <b>When to use:</b> Only enable this when:
+        /// </para>
+        /// <list type="number">
+        ///   <item><description>Data freshness requirements are relaxed for your use case</description></item>
+        ///   <item><description>You have alternative mechanisms for ensuring data consistency</description></item>
+        ///   <item><description>Your environment is not subject to regulatory compliance requirements</description></item>
+        /// </list>
+        /// </remarks>
+        /// <value>
+        /// <c>true</c> to allow expired cursors and accept potential missed deletes;
+        /// <c>false</c> or <c>null</c> to enforce cursor expiration (default, recommended).
+        /// </value>
         public bool? AllowExpiredCursorsAndAcceptMissedDeletes { get; set; }
     }
 

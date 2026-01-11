@@ -334,6 +334,15 @@ namespace CogniteSdk.Resources
         #region GraphQL
 
         /// <summary>
+        /// Maximum allowed length for GraphQL query strings.
+        /// </summary>
+        /// <remarks>
+        /// This limit prevents excessive memory consumption from very large queries.
+        /// The CDF API may have its own limits which may be lower.
+        /// </remarks>
+        private const int MaxGraphQLQueryLength = 100_000;
+
+        /// <summary>
         /// Execute a typed GraphQL query against a data model.
         /// </summary>
         /// <typeparam name="T">Type to deserialize the response data into</typeparam>
@@ -345,6 +354,7 @@ namespace CogniteSdk.Resources
         /// <param name="operationName">Optional operation name when query contains multiple operations</param>
         /// <param name="token">Optional cancellation token</param>
         /// <returns>GraphQL response with typed data</returns>
+        /// <exception cref="ArgumentException">Thrown when space, externalId, version, or query is null, empty, or invalid.</exception>
         public async Task<GraphQLResponse<T>> GraphQLQuery<T>(
             string space,
             string externalId,
@@ -354,6 +364,11 @@ namespace CogniteSdk.Resources
             string operationName = null,
             CancellationToken token = default)
         {
+            ValidateGraphQLIdentifier(space, nameof(space));
+            ValidateGraphQLIdentifier(externalId, nameof(externalId));
+            ValidateGraphQLIdentifier(version, nameof(version));
+            ValidateGraphQLQuery(query);
+
             var request = new GraphQLRequest
             {
                 Query = query,
@@ -376,6 +391,7 @@ namespace CogniteSdk.Resources
         /// <param name="operationName">Optional operation name when query contains multiple operations</param>
         /// <param name="token">Optional cancellation token</param>
         /// <returns>GraphQL response with raw JsonElement data</returns>
+        /// <exception cref="ArgumentException">Thrown when space, externalId, version, or query is null, empty, or invalid.</exception>
         public async Task<GraphQLRawResponse> GraphQLQueryRaw(
             string space,
             string externalId,
@@ -385,6 +401,11 @@ namespace CogniteSdk.Resources
             string operationName = null,
             CancellationToken token = default)
         {
+            ValidateGraphQLIdentifier(space, nameof(space));
+            ValidateGraphQLIdentifier(externalId, nameof(externalId));
+            ValidateGraphQLIdentifier(version, nameof(version));
+            ValidateGraphQLQuery(query);
+
             var request = new GraphQLRequest
             {
                 Query = query,
@@ -403,12 +424,16 @@ namespace CogniteSdk.Resources
         /// <param name="version">Version of the data model</param>
         /// <param name="token">Optional cancellation token</param>
         /// <returns>GraphQL introspection response</returns>
+        /// <exception cref="ArgumentException">Thrown when space, externalId, or version is null, empty, or invalid.</exception>
         public async Task<GraphQLRawResponse> GraphQLIntrospect(
             string space,
             string externalId,
             string version,
             CancellationToken token = default)
         {
+            ValidateGraphQLIdentifier(space, nameof(space));
+            ValidateGraphQLIdentifier(externalId, nameof(externalId));
+            ValidateGraphQLIdentifier(version, nameof(version));
             const string introspectionQuery = @"
                 query IntrospectionQuery {
                     __schema {
@@ -465,6 +490,36 @@ namespace CogniteSdk.Resources
                 }";
 
             return await GraphQLQueryRaw(space, externalId, version, introspectionQuery, token: token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates a GraphQL identifier (space, externalId, version) for security.
+        /// </summary>
+        /// <param name="value">The identifier value to validate.</param>
+        /// <param name="paramName">The parameter name for error messages.</param>
+        /// <exception cref="ArgumentException">Thrown when the value is null, empty, or contains invalid characters.</exception>
+        private static void ValidateGraphQLIdentifier(string value, string paramName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException($"{paramName} cannot be null or empty", paramName);
+
+            // Prevent path traversal attacks - these characters could manipulate URL paths
+            if (value.Contains("..") || value.Contains("/") || value.Contains("\\") || value.Contains("%"))
+                throw new ArgumentException($"{paramName} contains invalid characters that could be used for path traversal", paramName);
+        }
+
+        /// <summary>
+        /// Validates a GraphQL query string.
+        /// </summary>
+        /// <param name="query">The query to validate.</param>
+        /// <exception cref="ArgumentException">Thrown when the query is null, empty, or exceeds maximum length.</exception>
+        private static void ValidateGraphQLQuery(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentException("Query cannot be null or empty", nameof(query));
+
+            if (query.Length > MaxGraphQLQueryLength)
+                throw new ArgumentException($"Query exceeds maximum length of {MaxGraphQLQueryLength} characters", nameof(query));
         }
 
         #endregion

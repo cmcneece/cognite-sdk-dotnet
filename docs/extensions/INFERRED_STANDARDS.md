@@ -43,13 +43,13 @@ The Cognite SDK powers industrial applications where reliability is paramount. C
 
 ### General Rules
 
-| Element | Convention | Example |
-|---------|------------|---------|
-| Public properties | PascalCase | `ExternalId`, `CreatedTime` |
-| Private fields | `_camelCase` | `_filter`, `_httpClient` |
-| Parameters | camelCase | `externalId`, `cancellationToken` |
-| Constants | PascalCase | `DefaultLimit`, `MaxBatchSize` |
-| Interfaces | `I` prefix | `IDMSFilter`, `IQueryTableExpression` |
+| Element           | Convention   | Example                               |
+| ----------------- | ------------ | ------------------------------------- |
+| Public properties | PascalCase   | `ExternalId`, `CreatedTime`           |
+| Private fields    | `_camelCase` | `_filter`, `_httpClient`              |
+| Parameters        | camelCase    | `externalId`, `cancellationToken`     |
+| Constants         | PascalCase   | `DefaultLimit`, `MaxBatchSize`        |
+| Interfaces        | `I` prefix   | `IDMSFilter`, `IQueryTableExpression` |
 
 ### Async Methods
 
@@ -69,15 +69,15 @@ public Task<IEnumerable<T>> List<T>(...)
 
 Types follow a consistent suffix pattern based on their purpose:
 
-| Suffix | Purpose | Example |
-|--------|---------|---------|
-| `Create` | Types for creating resources | `AssetCreate`, `NodeCreate` |
-| `Update` | Types for updating resources | `AssetUpdate`, `NodeUpdate` |
-| `Filter` | Types for filtering queries | `AssetFilter`, `DMSFilter` |
-| `Query` | Types for complex queries | `Query`, `SyncQuery` |
-| `Request` | Full API request payloads | `GraphQLRequest` |
-| `Response` | API response wrappers | `GraphQLResponse<T>` |
-| `Result` | Operation results | `QueryResult<T>`, `SyncResult<T>` |
+| Suffix     | Purpose                      | Example                           |
+| ---------- | ---------------------------- | --------------------------------- |
+| `Create`   | Types for creating resources | `AssetCreate`, `NodeCreate`       |
+| `Update`   | Types for updating resources | `AssetUpdate`, `NodeUpdate`       |
+| `Filter`   | Types for filtering queries  | `AssetFilter`, `DMSFilter`        |
+| `Query`    | Types for complex queries    | `Query`, `SyncQuery`              |
+| `Request`  | Full API request payloads    | `GraphQLRequest`                  |
+| `Response` | API response wrappers        | `GraphQLResponse<T>`              |
+| `Result`   | Operation results            | `QueryResult<T>`, `SyncResult<T>` |
 
 ---
 
@@ -567,15 +567,15 @@ public async Task<GraphQLResponse<T>> QueryAsync<T>(
 
 ### Required Tags
 
-| Tag | When to Use |
-|-----|-------------|
-| `<summary>` | Always - describes what the member does |
-| `<param>` | For each parameter |
-| `<typeparam>` | For each type parameter |
-| `<returns>` | For methods that return a value |
-| `<exception>` | For each exception that can be thrown |
-| `<example>` | For complex APIs - shows usage |
-| `<remarks>` | For additional context or caveats |
+| Tag           | When to Use                             |
+| ------------- | --------------------------------------- |
+| `<summary>`   | Always - describes what the member does |
+| `<param>`     | For each parameter                      |
+| `<typeparam>` | For each type parameter                 |
+| `<returns>`   | For methods that return a value         |
+| `<exception>` | For each exception that can be thrown   |
+| `<example>`   | For complex APIs - shows usage          |
+| `<remarks>`   | For additional context or caveats       |
 
 ---
 

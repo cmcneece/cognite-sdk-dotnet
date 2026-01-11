@@ -59,7 +59,15 @@ export TEST_TENANT_ID_READ=$TENANT_ID
 export TEST_CLIENT_ID_READ=$CLIENT_ID
 export TEST_CLIENT_SECRET_READ=$CLIENT_SECRET
 
-echo "Environment configured:"
+echo ""
+echo "✓ Environment configured for testing"
 echo "  Project: $CDF_PROJECT"
 echo "  Cluster: $CDF_CLUSTER"
 echo "  Host: $TEST_HOST_WRITE"
+echo ""
+echo "⚠️  SECURITY NOTICE: Credentials are now in environment variables."
+echo "   When finished testing, run the following to clear credentials:"
+echo ""
+echo "   unset TEST_CLIENT_SECRET_WRITE TEST_CLIENT_SECRET_READ CLIENT_SECRET"
+echo "   unset TEST_TOKEN_WRITE TEST_TOKEN_READ"
+echo ""

@@ -9,12 +9,13 @@ using System.Text.Json;
 namespace CogniteSdk.DataModels
 {
     /// <summary>
-    /// Fluent builder for DMS filters.
+    /// Fluent builder for DMS filters. NOT THREAD-SAFE - create a new instance for each filter.
     /// Produces <see cref="IDMSFilter"/> objects compatible with the CDF API.
     /// </summary>
     /// <remarks>
     /// <para>Property paths use the format: [space, "viewExternalId/version", property]</para>
-    /// <para>This builder is not thread-safe. Create a new instance for each filter.</para>
+    /// <para><b>Thread Safety:</b> This builder is NOT thread-safe. Each thread or concurrent 
+    /// operation must create its own FilterBuilder instance. Do not share instances across threads.</para>
     /// </remarks>
     /// <example>
     /// <code>
@@ -25,6 +26,8 @@ namespace CogniteSdk.DataModels
     /// </example>
     public class FilterBuilder
     {
+        // Note: JsonSerializerOptions is thread-safe for reading after construction.
+        // Do not modify these options after initialization.
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             WriteIndented = true,
@@ -426,6 +429,14 @@ namespace CogniteSdk.DataModels
         /// <summary>
         /// Returns a JSON string representation of the filter for debugging.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <b>⚠️ Security Note:</b> This method serializes all filter values to JSON.
+        /// Do not use in production logging if filters may contain sensitive data
+        /// (PII, credentials, tokens, etc.).
+        /// </para>
+        /// </remarks>
+        /// <returns>JSON representation of the filter, or a placeholder message.</returns>
         public override string ToString()
         {
             if (_filter == null)
@@ -435,8 +446,10 @@ namespace CogniteSdk.DataModels
             {
                 return JsonSerializer.Serialize(_filter, _filter.GetType(), JsonOptions);
             }
-            catch
+            catch (JsonException ex)
             {
+                // Log for debugging but don't expose serialization details in production
+                System.Diagnostics.Debug.WriteLine($"FilterBuilder.ToString() serialization failed: {ex.Message}");
                 return "<filter serialization failed>";
             }
         }

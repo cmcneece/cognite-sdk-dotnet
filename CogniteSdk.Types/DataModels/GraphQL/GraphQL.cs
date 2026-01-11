@@ -22,6 +22,16 @@ namespace CogniteSdk.DataModels
         /// <summary>
         /// Optional variables to pass to the query.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Values should be JSON-serializable primitives (string, number, boolean), 
+        /// arrays, or simple objects. Complex .NET types may not serialize as expected.
+        /// </para>
+        /// <para>
+        /// <b>Security Note:</b> Avoid passing sensitive data (credentials, tokens, PII) 
+        /// as variables if logging is enabled, as these may appear in request logs.
+        /// </para>
+        /// </remarks>
         [JsonPropertyName("variables")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Dictionary<string, object> Variables { get; set; }

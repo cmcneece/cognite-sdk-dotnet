@@ -15,9 +15,9 @@ The Data Modeling extensions demonstrate **generally good security practices** w
 
 | Severity | Count | Status |
 |----------|-------|--------|
-| 🔴 High | 1 | Open |
-| 🟠 Medium | 3 | Open |
-| 🟡 Low | 4 | Open |
+| 🔴 High | 1 | ✅ Fixed |
+| 🟠 Medium | 3 | ✅ Fixed (2) / ⚠️ Out of Scope (1) |
+| 🟡 Low | 4 | ✅ Fixed |
 | ✅ Positive | 5 | N/A |
 
 ---
@@ -545,14 +545,18 @@ This allows consumers to check for errors before accessing data.
 
 | ID | Status | Fixed In | Verified By | Date |
 |----|--------|----------|-------------|------|
-| SEC-001 | Open | - | - | - |
-| SEC-002 | Open | - | - | - |
-| SEC-003 | Open | - | - | - |
-| SEC-004 | Open | - | - | - |
-| SEC-005 | Open | - | - | - |
-| SEC-006 | Open | - | - | - |
-| SEC-007 | Open | - | - | - |
-| SEC-008 | Open | - | - | - |
+| SEC-001 | ✅ Fixed | DataModels.cs | Unit Tests (64 passing) | 2026-01-11 |
+| SEC-002 | ⚠️ Out of Scope | N/A (F# layer) | N/A | N/A |
+| SEC-003 | ✅ Fixed | Query.cs | Code Review | 2026-01-11 |
+| SEC-004 | ✅ Fixed | FilterBuilder.cs | Code Review | 2026-01-11 |
+| SEC-005 | ✅ Fixed | FilterBuilder.cs | Code Review | 2026-01-11 |
+| SEC-006 | ✅ Fixed | test_auth_env.sh | Code Review | 2026-01-11 |
+| SEC-007 | ✅ Fixed | GraphQL.cs | Code Review | 2026-01-11 |
+| SEC-008 | ✅ Fixed | FilterBuilder.cs | Code Review | 2026-01-11 |
+
+### SEC-002 Note
+
+SEC-002 (Path Traversal Risk in F# Layer) is **out of scope** for this extension work. The fix would require modifying `Oryx.Cognite/src/DataModels.fs`, which is part of the core SDK's F# HTTP pipeline. The input validation added in SEC-001 at the C# layer provides defense-in-depth and mitigates the risk in practice.
 
 ---
 
