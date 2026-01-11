@@ -145,20 +145,6 @@ Executed against: CDF bluefield cluster
 
 ## Technical Decisions
 
-### GraphQL Oryx Integration
-
-**Decision:** Integrate GraphQL into the Oryx F#/C# pipeline rather than using a standalone class.
-
-**Implementation:**
-- Added F# handlers in `Oryx.Cognite/src/DataModels.fs` for GraphQL queries
-- Extended `CogniteSdk/src/Resources/DataModels.cs` with `GraphQLQuery<T>`, `GraphQLQueryRaw`, and `GraphQLIntrospect` methods
-- GraphQL is now accessible via `client.DataModels.GraphQLQuery<T>(...)` like other SDK methods
-
-**Benefits:**
-- Consistent authentication handling through the SDK's token provider
-- Uses the same HTTP pipeline as all other CDF operations
-- Native SDK experience for developers
-
 ### No IAsyncEnumerable Support
 
 **Decision:** Do not implement `IAsyncEnumerable` streaming.
