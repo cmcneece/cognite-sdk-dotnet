@@ -26,14 +26,6 @@ namespace CogniteSdk.DataModels
     /// </example>
     public class FilterBuilder
     {
-        // Note: JsonSerializerOptions is thread-safe for reading after construction.
-        // Do not modify these options after initialization.
-        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
         private IDMSFilter _filter;
 
         /// <summary>
@@ -431,6 +423,10 @@ namespace CogniteSdk.DataModels
         /// </summary>
         /// <remarks>
         /// <para>
+        /// Uses default serialization with indentation for readability.
+        /// Actual API serialization uses the common SDK json options from Oryx.Cognite.
+        /// </para>
+        /// <para>
         /// <b>⚠️ Security Note:</b> This method serializes all filter values to JSON.
         /// Do not use in production logging if filters may contain sensitive data
         /// (PII, credentials, tokens, etc.).
@@ -444,7 +440,7 @@ namespace CogniteSdk.DataModels
 
             try
             {
-                return JsonSerializer.Serialize(_filter, _filter.GetType(), JsonOptions);
+                return JsonSerializer.Serialize(_filter, _filter.GetType(), new JsonSerializerOptions { WriteIndented = true });
             }
             catch (JsonException ex)
             {
