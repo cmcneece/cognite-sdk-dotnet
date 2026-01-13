@@ -384,6 +384,118 @@ namespace CogniteSdk.DataModels
         }
 
         /// <summary>
+        /// Creates an overlaps filter for range properties.
+        /// Filters instances where the range defined by <paramref name="startProperty"/> and <paramref name="endProperty"/>
+        /// overlaps with the range defined by the bounds.
+        /// </summary>
+        /// <param name="startProperty">Property path for the start of the range.</param>
+        /// <param name="endProperty">Property path for the end of the range.</param>
+        /// <param name="gte">Inclusive lower bound.</param>
+        /// <param name="gt">Exclusive lower bound.</param>
+        /// <param name="lte">Inclusive upper bound.</param>
+        /// <param name="lt">Exclusive upper bound.</param>
+        public FilterBuilder Overlaps(IEnumerable<string> startProperty, IEnumerable<string> endProperty,
+            IDMSValue gte = null, IDMSValue gt = null, IDMSValue lte = null, IDMSValue lt = null)
+        {
+            ValidatePropertyPath(startProperty);
+            ValidatePropertyPath(endProperty);
+            if (gte == null && gt == null && lte == null && lt == null)
+                throw new ArgumentException("At least one range bound must be specified");
+
+            _filter = new OverlapsFilter
+            {
+                StartProperty = startProperty,
+                EndProperty = endProperty,
+                GreaterThanEqual = gte,
+                GreaterThan = gt,
+                LessThanEqual = lte,
+                LessThan = lt
+            };
+            return this;
+        }
+
+        /// <summary>
+        /// Creates an overlaps filter using ViewIdentifier with numeric bounds.
+        /// </summary>
+        /// <param name="view">The view identifier.</param>
+        /// <param name="startPropertyName">Property name for the start of the range.</param>
+        /// <param name="endPropertyName">Property name for the end of the range.</param>
+        /// <param name="gte">Inclusive lower bound.</param>
+        /// <param name="gt">Exclusive lower bound.</param>
+        /// <param name="lte">Inclusive upper bound.</param>
+        /// <param name="lt">Exclusive upper bound.</param>
+        public FilterBuilder Overlaps(ViewIdentifier view, string startPropertyName, string endPropertyName,
+            double? gte = null, double? gt = null, double? lte = null, double? lt = null)
+        {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            ValidateStringParameter(startPropertyName, nameof(startPropertyName));
+            ValidateStringParameter(endPropertyName, nameof(endPropertyName));
+
+            return Overlaps(
+                BuildPropertyPath(view, startPropertyName),
+                BuildPropertyPath(view, endPropertyName),
+                gte.HasValue ? new RawPropertyValue<double>(gte.Value) : null,
+                gt.HasValue ? new RawPropertyValue<double>(gt.Value) : null,
+                lte.HasValue ? new RawPropertyValue<double>(lte.Value) : null,
+                lt.HasValue ? new RawPropertyValue<double>(lt.Value) : null
+            );
+        }
+
+        /// <summary>
+        /// Creates a filter requiring instances to be in the specified space.
+        /// </summary>
+        /// <param name="space">The space external ID.</param>
+        /// <param name="forNode">True for nodes, false for edges. Default is true (nodes).</param>
+        public FilterBuilder Space(string space, bool forNode = true)
+        {
+            ValidateStringParameter(space, nameof(space));
+
+            _filter = new EqualsFilter
+            {
+                Property = new[] { forNode ? "node" : "edge", "space" },
+                Value = new RawPropertyValue<string>(space)
+            };
+            return this;
+        }
+
+        /// <summary>
+        /// Creates a filter matching a specific instance by external ID.
+        /// </summary>
+        /// <param name="externalId">The external ID to match.</param>
+        /// <param name="forNode">True for nodes, false for edges. Default is true (nodes).</param>
+        public FilterBuilder ExternalId(string externalId, bool forNode = true)
+        {
+            ValidateStringParameter(externalId, nameof(externalId));
+
+            _filter = new EqualsFilter
+            {
+                Property = new[] { forNode ? "node" : "edge", "externalId" },
+                Value = new RawPropertyValue<string>(externalId)
+            };
+            return this;
+        }
+
+        /// <summary>
+        /// Creates a filter matching instances with external IDs in the specified list.
+        /// </summary>
+        /// <param name="externalIds">The external IDs to match.</param>
+        /// <param name="forNode">True for nodes, false for edges. Default is true (nodes).</param>
+        public FilterBuilder ExternalIdIn(IEnumerable<string> externalIds, bool forNode = true)
+        {
+            if (externalIds == null) throw new ArgumentNullException(nameof(externalIds));
+            var idList = externalIds.ToList();
+            if (idList.Count == 0)
+                throw new ArgumentException("At least one external ID must be provided", nameof(externalIds));
+
+            _filter = new InFilter
+            {
+                Property = new[] { forNode ? "node" : "edge", "externalId" },
+                Values = idList.Select(id => (IDMSValue)new RawPropertyValue<string>(id)).ToList()
+            };
+            return this;
+        }
+
+        /// <summary>
         /// Creates a parameter reference for use in parameterized queries.
         /// </summary>
         /// <remarks>
@@ -475,6 +587,32 @@ namespace CogniteSdk.DataModels
         {
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentException($"{paramName} cannot be null or empty", paramName);
+        }
+    }
+
+    /// <summary>
+    /// Extension methods for <see cref="IDMSFilter"/>.
+    /// </summary>
+    public static class DmsFilterExtensions
+    {
+        /// <summary>
+        /// Returns the inverse of the filter.
+        /// If the filter is already a <see cref="NotFilter"/>, unwraps and returns the inner filter.
+        /// </summary>
+        /// <param name="filter">The filter to invert.</param>
+        /// <returns>The inverted filter.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when filter is null.</exception>
+        public static IDMSFilter Not(this IDMSFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            // If already a NotFilter, unwrap it (double negation elimination)
+            if (filter is NotFilter notFilter)
+            {
+                return notFilter.Not;
+            }
+
+            return new NotFilter { Not = filter };
         }
     }
 }
