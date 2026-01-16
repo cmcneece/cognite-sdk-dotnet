@@ -330,5 +330,198 @@ namespace CogniteSdk.Resources
             var req = Oryx.Cognite.DataModels.syncInstances<T>(query, GetContext(token));
             return await RunAsync(req).ConfigureAwait(false);
         }
+
+        #region GraphQL
+
+        /// <summary>
+        /// Maximum allowed length for GraphQL query strings.
+        /// </summary>
+        /// <remarks>
+        /// This limit prevents excessive memory consumption from very large queries.
+        /// The CDF API may have its own limits which may be lower.
+        /// </remarks>
+        private const int MaxGraphQLQueryLength = 100_000;
+
+        /// <summary>
+        /// Execute a typed GraphQL query against a data model.
+        /// </summary>
+        /// <typeparam name="T">Type to deserialize the response data into</typeparam>
+        /// <param name="space">Space containing the data model</param>
+        /// <param name="externalId">External ID of the data model</param>
+        /// <param name="version">Version of the data model</param>
+        /// <param name="query">GraphQL query string</param>
+        /// <param name="variables">Optional variables to pass to the query</param>
+        /// <param name="operationName">Optional operation name when query contains multiple operations</param>
+        /// <param name="token">Optional cancellation token</param>
+        /// <returns>GraphQL response with typed data</returns>
+        /// <exception cref="ArgumentException">Thrown when space, externalId, version, or query is null, empty, or invalid.</exception>
+        public async Task<GraphQLResponse<T>> GraphQLQuery<T>(
+            string space,
+            string externalId,
+            string version,
+            string query,
+            Dictionary<string, object> variables = null,
+            string operationName = null,
+            CancellationToken token = default)
+        {
+            ValidateGraphQLIdentifier(space, nameof(space));
+            ValidateGraphQLIdentifier(externalId, nameof(externalId));
+            ValidateGraphQLIdentifier(version, nameof(version));
+            ValidateGraphQLQuery(query);
+
+            var request = new GraphQLRequest
+            {
+                Query = query,
+                Variables = variables,
+                OperationName = operationName
+            };
+            var req = Oryx.Cognite.DataModels.graphqlQuery<T>(space, externalId, version, request, GetContext(token));
+            return await RunAsync(req).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Execute a raw GraphQL query against a data model.
+        /// Returns the response with data as a JsonElement for manual parsing.
+        /// </summary>
+        /// <param name="space">Space containing the data model</param>
+        /// <param name="externalId">External ID of the data model</param>
+        /// <param name="version">Version of the data model</param>
+        /// <param name="query">GraphQL query string</param>
+        /// <param name="variables">Optional variables to pass to the query</param>
+        /// <param name="operationName">Optional operation name when query contains multiple operations</param>
+        /// <param name="token">Optional cancellation token</param>
+        /// <returns>GraphQL response with raw JsonElement data</returns>
+        /// <exception cref="ArgumentException">Thrown when space, externalId, version, or query is null, empty, or invalid.</exception>
+        public async Task<GraphQLRawResponse> GraphQLQueryRaw(
+            string space,
+            string externalId,
+            string version,
+            string query,
+            Dictionary<string, object> variables = null,
+            string operationName = null,
+            CancellationToken token = default)
+        {
+            ValidateGraphQLIdentifier(space, nameof(space));
+            ValidateGraphQLIdentifier(externalId, nameof(externalId));
+            ValidateGraphQLIdentifier(version, nameof(version));
+            ValidateGraphQLQuery(query);
+
+            var request = new GraphQLRequest
+            {
+                Query = query,
+                Variables = variables,
+                OperationName = operationName
+            };
+            var req = Oryx.Cognite.DataModels.graphqlQueryRaw(space, externalId, version, request, GetContext(token));
+            return await RunAsync(req).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get the GraphQL schema for a data model via introspection.
+        /// </summary>
+        /// <param name="space">Space containing the data model</param>
+        /// <param name="externalId">External ID of the data model</param>
+        /// <param name="version">Version of the data model</param>
+        /// <param name="token">Optional cancellation token</param>
+        /// <returns>GraphQL introspection response</returns>
+        /// <exception cref="ArgumentException">Thrown when space, externalId, or version is null, empty, or invalid.</exception>
+        public async Task<GraphQLRawResponse> GraphQLIntrospect(
+            string space,
+            string externalId,
+            string version,
+            CancellationToken token = default)
+        {
+            ValidateGraphQLIdentifier(space, nameof(space));
+            ValidateGraphQLIdentifier(externalId, nameof(externalId));
+            ValidateGraphQLIdentifier(version, nameof(version));
+            const string introspectionQuery = @"
+                query IntrospectionQuery {
+                    __schema {
+                        queryType { name }
+                        mutationType { name }
+                        types {
+                            ...FullType
+                        }
+                    }
+                }
+                fragment FullType on __Type {
+                    kind
+                    name
+                    description
+                    fields(includeDeprecated: true) {
+                        name
+                        description
+                        args { ...InputValue }
+                        type { ...TypeRef }
+                        isDeprecated
+                        deprecationReason
+                    }
+                    inputFields { ...InputValue }
+                    interfaces { ...TypeRef }
+                    enumValues(includeDeprecated: true) {
+                        name
+                        description
+                        isDeprecated
+                        deprecationReason
+                    }
+                    possibleTypes { ...TypeRef }
+                }
+                fragment InputValue on __InputValue {
+                    name
+                    description
+                    type { ...TypeRef }
+                    defaultValue
+                }
+                fragment TypeRef on __Type {
+                    kind
+                    name
+                    ofType {
+                        kind
+                        name
+                        ofType {
+                            kind
+                            name
+                            ofType {
+                                kind
+                                name
+                            }
+                        }
+                    }
+                }";
+
+            return await GraphQLQueryRaw(space, externalId, version, introspectionQuery, token: token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates a GraphQL identifier (space, externalId, version) for security.
+        /// </summary>
+        /// <param name="value">The identifier value to validate.</param>
+        /// <param name="paramName">The parameter name for error messages.</param>
+        /// <exception cref="ArgumentException">Thrown when the value is null, empty, or contains invalid characters.</exception>
+        private static void ValidateGraphQLIdentifier(string value, string paramName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException($"{paramName} cannot be null or empty", paramName);
+
+            // Prevent path traversal attacks - these characters could manipulate URL paths
+            if (value.Contains("..") || value.Contains("/") || value.Contains("\\") || value.Contains("%"))
+                throw new ArgumentException($"{paramName} contains invalid characters that could be used for path traversal", paramName);
+        }
+
+        /// <summary>
+        /// Validates a GraphQL query string.
+        /// </summary>
+        /// <param name="query">The query to validate.</param>
+        /// <exception cref="ArgumentException">Thrown when the query is null, empty, or exceeds maximum length.</exception>
+        private static void ValidateGraphQLQuery(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentException("Query cannot be null or empty", nameof(query));
+
+            if (query.Length > MaxGraphQLQueryLength)
+                throw new ArgumentException($"Query exceeds maximum length of {MaxGraphQLQueryLength} characters", nameof(query));
+        }
+
+        #endregion
     }
 }
