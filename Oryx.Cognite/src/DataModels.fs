@@ -308,3 +308,35 @@ module DataModels =
         |> withLogMessage "models:instances:query"
         |> withCompletion HttpCompletionOption.ResponseHeadersRead
         |> postV10 request (instancesUrl +/ "sync")
+
+    /// GraphQL URL builder for data model queries
+    let graphqlUrl (space: string) (externalId: string) (version: string) =
+        Url +/ "spaces" +/ space +/ "datamodels" +/ externalId +/ "versions" +/ version +/ "graphql"
+
+    /// Execute a GraphQL query against a data model
+    let graphqlQuery<'T>
+        (space: string)
+        (externalId: string)
+        (version: string)
+        (request: GraphQLRequest)
+        (source: HttpHandler<unit>)
+        : HttpHandler<GraphQLResponse<'T>> =
+        let url = graphqlUrl space externalId version
+        source
+        |> withLogMessage "models:graphql:query"
+        |> withCompletion HttpCompletionOption.ResponseHeadersRead
+        |> postV10 request url
+
+    /// Execute a raw GraphQL query (returns JsonElement data)
+    let graphqlQueryRaw
+        (space: string)
+        (externalId: string)
+        (version: string)
+        (request: GraphQLRequest)
+        (source: HttpHandler<unit>)
+        : HttpHandler<GraphQLRawResponse> =
+        let url = graphqlUrl space externalId version
+        source
+        |> withLogMessage "models:graphql:query"
+        |> withCompletion HttpCompletionOption.ResponseHeadersRead
+        |> postV10 request url
